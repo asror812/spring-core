@@ -1,0 +1,42 @@
+[
+  {
+    "traineeId": "623e4567-e89b-12d3-a456-426614174005",
+    "trainerId": "123e4567-e89b-12d3-a456-426614174000",
+    "trainingName": "Morning Fitness Routine",
+    "trainingType": "Fitness",
+    "trainingDate": "2024-01-15",
+    "trainingDuration": 1.5
+  },
+  {
+    "traineeId": "723e4567-e89b-12d3-a456-426614174006",
+    "trainerId": "223e4567-e89b-12d3-a456-426614174001",
+    "trainingName": "Yoga for Beginners",
+    "trainingType": "Yoga",
+    "trainingDate": "2024-02-10",
+    "trainingDuration": 2.0
+  },
+  {
+    "traineeId": "823e4567-e89b-12d3-a456-426614174007",
+    "trainerId": "323e4567-e89b-12d3-a456-426614174002",
+    "trainingName": "Strength Training Basics",
+    "trainingType": "Strength Training",
+    "trainingDate": "2024-03-05",
+    "trainingDuration": 1.0
+  },
+  {
+    "traineeId": "923e4567-e89b-12d3-a456-426614174008",
+    "trainerId": "423e4567-e89b-12d3-a456-426614174003",
+    "trainingName": "Cardio Blast",
+    "trainingType": "Cardio",
+    "trainingDate": "2024-03-20",
+    "trainingDuration": 1.25
+  },
+  {
+    "traineeId": "a23e4567-e89b-12d3-a456-426614174009",
+    "trainerId": "523e4567-e89b-12d3-a456-426614174004",
+    "trainingName": "Pilates Essentials",
+    "trainingType": "Pilates",
+    "trainingDate": "2024-04-01",
+    "trainingDuration": 1.75
+  }
+]

@@ -1,0 +1,14 @@
+trainings:
+  file:
+     path: trainings.json
+
+trainees:
+  file:
+    path:  trainees.json
+
+
+trainers:
+  file:
+    path:  trainers.json
+
+

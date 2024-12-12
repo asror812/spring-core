@@ -1,0 +1,47 @@
+[
+  {
+    "userId": "123e4567-e89b-12d3-a456-426614174000",
+    "specialization": "Fitness",
+    "firstName": "John",
+    "lastName": "Doe",
+    "userName": "John.Doe",
+    "password": "password123",
+    "active": true
+  },
+  {
+    "userId": "223e4567-e89b-12d3-a456-426614174001",
+    "specialization": "Yoga",
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "userName": "Jane.Smith",
+    "password": "password456",
+    "active": true
+  },
+  {
+    "userId": "323e4567-e89b-12d3-a456-426614174002",
+    "specialization": "Strength Training",
+    "firstName": "Alice",
+    "lastName": "Johnson",
+    "userName": "Alice.Johnson",
+    "password": "securepassword789",
+    "active": false
+  },
+  {
+    "userId": "423e4567-e89b-12d3-a456-426614174003",
+    "specialization": "Cardio",
+    "firstName": "Bob",
+    "lastName": "Brown",
+    "userName": "Bob.Brown",
+    "password": "pass1234",
+    "active": true
+  },
+  {
+    "userId": "523e4567-e89b-12d3-a456-426614174004",
+    "specialization": "Pilates",
+    "firstName": "Eve",
+    "lastName": "White",
+    "userName": "Eve.White",
+    "password": "mypassword567",
+    "active": false
+  }
+]
