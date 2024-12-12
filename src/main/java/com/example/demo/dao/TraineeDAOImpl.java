@@ -5,15 +5,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Component
 public class TraineeDAOImpl implements TraineeDAO {
 
-     private final Logger logger = LoggerFactory.getLogger(TraineeDAOImpl.class);
      private final Map<UUID, Trainee> traineesMap;
 
      @Autowired
@@ -29,7 +26,6 @@ public class TraineeDAOImpl implements TraineeDAO {
 
 
          if(trainee1 == null) {
-             logger.info("Trainee " + trainee.getUserId() + " successfully created");
              traineesMap.put(trainee.getUserId(), trainee);
          }
          else {

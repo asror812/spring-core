@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.Training;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -11,6 +12,7 @@ public class TrainingDAOImpl implements TrainingDAO {
 
     private final Map<UUID, Training> trainings;
 
+    @Autowired
     public TrainingDAOImpl(Map<UUID, Training> trainings) {
         this.trainings = new HashMap<>();
     }
@@ -27,8 +29,8 @@ public class TrainingDAOImpl implements TrainingDAO {
     }
 
     @Override
-    public Training selectById(int id) {
+    public Training selectById(UUID id) {
 
-        return null;
+        return trainings.get(id);
     }
 }
