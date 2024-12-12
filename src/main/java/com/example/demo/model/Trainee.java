@@ -15,6 +15,13 @@ public class Trainee  extends User{
 
     public Trainee() {}
 
+    public Trainee(UUID userId, String firstName , String lastName , String username, String password, boolean active , LocalDate dateOfBirth, String address ) {
+        super(firstName , lastName , username , password ,  active);
+        this.userId = userId;
+        this.dateOfBirth = dateOfBirth;
+        this.address = address;
+    }
+
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }

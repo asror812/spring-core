@@ -57,10 +57,10 @@ public class TraineeService {
 
     public Trainee create(TraineeCreateDTO createDTO) {
         Trainee newTrainee = new Trainee();
-        UUID id = UUID.randomUUID();
-        String userName = newTrainee.getFirstName()  + "." + newTrainee.getLastName();
-        String password = passwordGenerator.generate();
 
+        UUID id = UUID.randomUUID();
+        String userName = createDTO.getFirstName()  + "." + createDTO.getLastName();
+        String password = passwordGenerator.generate();
 
         newTrainee.setUserId(id);
         newTrainee.setFirstName(createDTO.getFirstName());
@@ -99,20 +99,23 @@ public class TraineeService {
         this.passwordGenerator = passwordGenerator;
     }
 
-    public void update(UUID id , TraineeUpdateDTO updateDTO) {
+    public Trainee update(UUID id , TraineeUpdateDTO updateDTO) {
         Trainee trainee = traineeDAO.selectById(id);
 
         if(trainee == null)  logger.error("Trainee with id {} not found", id);
 
-        trainee.setFirstName(updateDTO.getFirstName());
-        trainee.setLastName(updateDTO.getLastName());
-        trainee.setPassword(updateDTO.getPassword());
-        trainee.setAddress(updateDTO.getAddress());
+        else {
+            trainee.setFirstName(updateDTO.getFirstName());
+            trainee.setLastName(updateDTO.getLastName());
+            trainee.setPassword(updateDTO.getPassword());
+            trainee.setAddress(updateDTO.getAddress());
+            trainee.setDateOfBirth(updateDTO.getDateOfBirth());
 
+            traineeDAO.update(trainee);
 
+            logger.info("Trainee with id {} successfully updated" , trainee.getUserId());
+        }
 
-        traineeDAO.update(trainee);
+        return  trainee;
     }
-
-
 }

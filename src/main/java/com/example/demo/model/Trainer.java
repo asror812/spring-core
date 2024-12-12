@@ -11,6 +11,11 @@ public class Trainer extends User{
     public Trainer() {
         super();
     }
+    public Trainer( UUID userId, String firstName, String lastName, String username , String specialization  , String password , boolean active ) {
+        super(firstName , lastName ,  username , password , active);
+        this.userId = userId;
+        this.specialization = specialization;
+    }
 
 
     public UUID getUserId() {

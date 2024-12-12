@@ -4,7 +4,7 @@
     "specialization": "Fitness",
     "firstName": "John",
     "lastName": "Doe",
-    "userName": "John.Doe",
+    "username": "John.Doe",
     "password": "password123",
     "active": true
   },
@@ -13,7 +13,7 @@
     "specialization": "Yoga",
     "firstName": "Jane",
     "lastName": "Smith",
-    "userName": "Jane.Smith",
+    "username": "Jane.Smith",
     "password": "password456",
     "active": true
   },
@@ -22,7 +22,7 @@
     "specialization": "Strength Training",
     "firstName": "Alice",
     "lastName": "Johnson",
-    "userName": "Alice.Johnson",
+    "username": "Alice.Johnson",
     "password": "securepassword789",
     "active": false
   },
@@ -31,7 +31,7 @@
     "specialization": "Cardio",
     "firstName": "Bob",
     "lastName": "Brown",
-    "userName": "Bob.Brown",
+    "username": "Bob.Brown",
     "password": "pass1234",
     "active": true
   },
@@ -40,7 +40,7 @@
     "specialization": "Pilates",
     "firstName": "Eve",
     "lastName": "White",
-    "userName": "Eve.White",
+    "username": "Eve.White",
     "password": "mypassword567",
     "active": false
   }

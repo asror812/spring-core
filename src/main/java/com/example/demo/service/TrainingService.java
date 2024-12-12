@@ -52,7 +52,7 @@ public class TrainingService {
         return trainer;
     }
 
-    public Training save(TrainingCreateDTO createDTO) {
+    public Training create(TrainingCreateDTO createDTO) {
          Training newTraining = new Training();
 
 

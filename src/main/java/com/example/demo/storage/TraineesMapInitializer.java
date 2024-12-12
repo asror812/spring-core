@@ -22,9 +22,7 @@ public class TraineesMapInitializer {
 
     @Value("${trainees.file.path}")
     private String path;
-
     private final Map<UUID, Trainee> traineesMap ;
-
     private final Logger LOGGER = LoggerFactory.getLogger(TraineesMapInitializer.class);
 
     @Autowired

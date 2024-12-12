@@ -5,7 +5,7 @@
     "address": "123 Elm Street, Springfield",
     "firstName": "Tom",
     "lastName": "Hardy",
-    "userName": "Tom.Hardy",
+    "username": "Tom.Hardy",
     "password": "hardypass123",
     "active": true
   },
@@ -15,7 +15,7 @@
     "address": "456 Oak Avenue, Metropolis",
     "firstName": "Emma",
     "lastName": "Stone",
-    "userName": "Emma.Stone",
+    "username": "Emma.Stone",
     "password": "stoneemma456",
     "active": true
   },
@@ -25,7 +25,7 @@
     "address": "789 Pine Lane, Gotham",
     "firstName": "Bruce",
     "lastName": "Wayne",
-    "userName": "Bruce.Wayne",
+    "username": "Bruce.Wayne",
     "password": "batmanrules",
     "active": false
   },
@@ -35,7 +35,7 @@
     "address": "101 Maple Boulevard, Star City",
     "firstName": "Oliver",
     "lastName": "Queen",
-    "userName": "Oliver.Queen",
+    "username": "Oliver.Queen",
     "password": "greenarrow",
     "active": true
   },
@@ -45,7 +45,7 @@
     "address": "202 Birch Drive, Central City",
     "firstName": "Barry",
     "lastName": "Allen",
-    "userName": "Barry.Allen",
+    "username": "Barry.Allen",
     "password": "fastestman",
     "active": false
   }

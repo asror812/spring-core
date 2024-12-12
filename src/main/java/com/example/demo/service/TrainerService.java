@@ -48,7 +48,7 @@ public class TrainerService {
     }
 
 
-    public Trainer save(TrainerCreateDTO createDTO) {
+    public Trainer create(TrainerCreateDTO createDTO) {
 
         Trainer newTrainer = new Trainer();
         UUID userId = UUID.randomUUID();
@@ -67,6 +67,7 @@ public class TrainerService {
                  newTrainer.setUsername(username + userId);
 
                  trainerDAO.create(newTrainer);
+
                  logger.info("Trainer with username {} successfully created . Specialization : {}" ,
                          newTrainer.getUsername() , newTrainer.getSpecialization());
 
@@ -83,8 +84,22 @@ public class TrainerService {
         return newTrainer;
     }
 
-    public Trainer update(TrainerUpdateDTO updateDTO) {
+    public Trainer update(UUID id , TrainerUpdateDTO updateDTO) {
+         Trainer trainer = trainerDAO.selectById(id);
 
+         if(trainer == null) {
+             logger.error("Trainer with id {} not found", id);
+         }
+         else {
+             trainer.setFirstName(updateDTO.getFirstName());
+             trainer.setLastName(updateDTO.getLastName());
+             trainer.setPassword(updateDTO.getPassword());
+             trainer.setSpecialization(updateDTO.getSpecialization());
+
+             trainerDAO.update(trainer);
+         }
+
+         return trainer;
     }
 
 

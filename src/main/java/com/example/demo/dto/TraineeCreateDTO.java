@@ -12,6 +12,7 @@ public class TraineeCreateDTO {
     private String lastName;
     private LocalDate dateOfBirth;
     private String address;
+    private String password;
 
     public TraineeCreateDTO() {
 
@@ -47,5 +48,13 @@ public class TraineeCreateDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

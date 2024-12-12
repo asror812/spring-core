@@ -35,7 +35,7 @@ public class TrainerDAOImpl implements TrainerDAO {
 
     @Override
     public void update(Trainer trainer) {
-
+         trainersMap.put(trainer.getUserId() , trainer);
     }
 
 }

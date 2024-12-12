@@ -47,8 +47,9 @@ public class TraineeDAOImpl implements TraineeDAO {
 
     @Override
     public void update(Trainee trainee) {
-         //todo
-        throw new UnsupportedOperationException("Not supported yet.");
+
+         traineesMap.remove(trainee.getUserId());
+         traineesMap.put(trainee.getUserId(), trainee);
     }
 
     @Override

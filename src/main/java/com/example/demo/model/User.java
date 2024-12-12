@@ -12,6 +12,14 @@ public class User {
         
     }
 
+    public User(String firstName, String lastName, String username, String password ,boolean active) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.active = active;
+        this.password = password;
+    }
+
     public String getFirstName() {
         return firstName;
     }
