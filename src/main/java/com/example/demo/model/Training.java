@@ -18,14 +18,6 @@ public class Training {
     private Double trainingDuration;
 
 
-    public Training(UUID traineeId , UUID trainerId  , String trainingName , String trainingType , LocalDate trainingDate , Double trainingDuration) {
-        this.traineeId = traineeId;
-        this.trainerId = trainerId;
-        this.trainingName = trainingName;
-        this.trainingType = trainingType;
-        this.trainingDate = trainingDate;
-        this.trainingDuration = trainingDuration;
-    }
 
     public Training() {}
 
@@ -70,5 +62,12 @@ public class Training {
    }
    public void setTrainingDuration(Double trainingDuration) {
        this.trainingDuration = trainingDuration;
+   }
+
+
+   public String toString() {
+        return "Training [traineeId=" + traineeId + ", trainerId=" + trainerId + ", trainingName=" +
+                trainingName + ", trainingType=" + trainingType + ", trainingDate=" + trainingDate +
+                ", trainingDuration=" + trainingDuration + "]";
    }
 }

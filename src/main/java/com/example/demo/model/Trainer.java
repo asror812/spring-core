@@ -7,11 +7,6 @@ public class Trainer extends User{
     private UUID userId;
     private String specialization;
 
-    public Trainer(UUID userId , String specialization , String firstName, String lastName, boolean active) {
-        super(firstName, lastName , active);
-        this.userId = userId;
-        this.specialization = specialization;
-    }
 
     public Trainer() {
         super();
@@ -34,4 +29,8 @@ public class Trainer extends User{
         this.specialization = specialization;
     }
 
+
+    public String toString() {
+        return "Trainer [userId=" + userId + ", specialization=" + specialization + "]";
+    }
 }

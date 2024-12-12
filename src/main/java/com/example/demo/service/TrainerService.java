@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 
 import com.example.demo.dao.TrainerDAO;
+import com.example.demo.dto.TrainerCreateDTO;
+import com.example.demo.dto.TrainerUpdateDTO;
 import com.example.demo.model.Trainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -41,10 +44,48 @@ public class TrainerService {
 
         else logger.info("Trainer with id {} found", id);
 
-
         return trainer;
     }
 
+
+    public Trainer save(TrainerCreateDTO createDTO) {
+
+        Trainer newTrainer = new Trainer();
+        UUID userId = UUID.randomUUID();
+        String username = newTrainer.getFirstName()+ "." + newTrainer.getLastName();
+
+        newTrainer.setUserId(userId);
+        newTrainer.setFirstName(createDTO.getFirstName());
+        newTrainer.setLastName(createDTO.getLastName());
+        newTrainer.setUsername(username);
+        newTrainer.setSpecialization(createDTO.getSpecialization());
+
+        for (Trainer trainer1 : trainerDAO.select()) {
+             if(Objects.equals(trainer1.getFirstName(), createDTO.getFirstName())
+                 && Objects.equals(trainer1.getLastName(), createDTO.getLastName())) {
+
+                 newTrainer.setUsername(username + userId);
+
+                 trainerDAO.create(newTrainer);
+                 logger.info("Trainer with username {} successfully created . Specialization : {}" ,
+                         newTrainer.getUsername() , newTrainer.getSpecialization());
+
+                 return newTrainer;
+             }
+        }
+
+        trainerDAO.create(newTrainer);
+
+        logger.info("Trainer with username {} successfully created. Specialization: {} successfully created" ,
+                username  ,  newTrainer.getSpecialization());
+
+
+        return newTrainer;
+    }
+
+    public Trainer update(TrainerUpdateDTO updateDTO) {
+
+    }
 
 
 

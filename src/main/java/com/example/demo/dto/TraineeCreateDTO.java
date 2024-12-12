@@ -1,19 +1,37 @@
-package com.example.demo.model;
+package com.example.demo.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-public class Trainee  extends User{
+public class TraineeCreateDTO {
 
-    private UUID   userId;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+
+    private String firstName;
+    private String lastName;
     private LocalDate dateOfBirth;
     private String address;
 
+    public TraineeCreateDTO() {
 
-    public Trainee() {}
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
@@ -29,17 +47,5 @@ public class Trainee  extends User{
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public String toString() {
-        return "Trainee [userId=" + userId + ", dateOfBirth=" + dateOfBirth + ", address=" + address + "]";
     }
 }

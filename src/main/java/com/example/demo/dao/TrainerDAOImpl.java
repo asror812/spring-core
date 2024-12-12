@@ -20,7 +20,7 @@ public class TrainerDAOImpl implements TrainerDAO {
 
     @Override
     public void create(Trainer trainer) {
-            //todo
+        trainersMap.put(trainer.getUserId() , trainer);
     }
 
     @Override
