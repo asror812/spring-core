@@ -19,7 +19,7 @@ import java.util.UUID;
 public class TraineeService {
 
 
-    private final Logger logger = LoggerFactory.getLogger(TraineeService.class);
+    private static final  Logger logger = LoggerFactory.getLogger(TraineeService.class);
 
     private PasswordGenerator passwordGenerator;
 

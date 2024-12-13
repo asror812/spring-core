@@ -23,7 +23,7 @@ public class TrainersMapInitializer {
     @Value("${trainers.file.path}")
     private String path;
 
-    private final Logger LOGGER = LoggerFactory.getLogger(TrainersMapInitializer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainersMapInitializer.class);
 
     private final Map<UUID , Trainer>  trainersMap;
 
