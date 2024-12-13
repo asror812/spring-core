@@ -18,16 +18,29 @@ public class TrainingServiceTest {
     private PasswordGenerator passwordGenerator;
 
 
-    private  Map<UUID , Training> trainingsMap;
+    private  final Map<UUID , Training> trainingsMap;
 
     @Autowired
-    public TrainingServiceTest(TrainingService trainingService) {
+    public TrainingServiceTest(Map<UUID , Training> trainingsMap) {
+        this.trainingsMap = trainingsMap;
+    }
+
+    @Autowired
+    public void setTrainingService(TrainingService trainingService) {
         this.trainingService = trainingService;
     }
 
+
+    @Autowired
+    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
+        this.passwordGenerator = passwordGenerator;
+    }
+
+
+
     @BeforeEach
     public void setUp() {
-        trainingsMap  = new HashMap<>();
+        trainingsMap.clear();
     }
 
 
@@ -36,13 +49,4 @@ public class TrainingServiceTest {
 
     }
 
-    @Autowired
-    public void setTrainingsMap(Map<UUID , Training> trainingsMap) {
-        this.trainingsMap = trainingsMap;
-    }
-
-    @Autowired
-    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
-        this.passwordGenerator = passwordGenerator;
-    }
 }
