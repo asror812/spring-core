@@ -70,6 +70,7 @@ public class TraineeServiceTest {
         traineeService.update(traineeId, updateDTO);
 
         Assertions.assertEquals("Asror.R", traineesMap.get(trainee.getUserId()).getUsername());
+        Assertions.assertEquals("Ruzimurodov" , traineesMap.get(trainee.getUserId()).getLastName());
         Assertions.assertEquals("zxcvb12345", traineesMap.get(trainee.getUserId()).getPassword());
     }
 

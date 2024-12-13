@@ -21,17 +21,7 @@ public class TraineeDAOImpl implements TraineeDAO {
 
      @Override
      public void create(Trainee trainee) {
-
-         Trainee trainee1 = traineesMap.get(trainee.getUserId());
-
-
-         if(trainee1 == null) {
-             traineesMap.put(trainee.getUserId(), trainee);
-         }
-         else {
-
-         }
-
+         traineesMap.putIfAbsent(trainee.getUserId(), trainee);
      }
 
     @Override

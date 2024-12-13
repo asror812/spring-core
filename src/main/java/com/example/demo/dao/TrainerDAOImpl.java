@@ -13,14 +13,14 @@ public class TrainerDAOImpl implements TrainerDAO {
     private final Map<UUID , Trainer> trainersMap ;
 
     @Autowired
-    public TrainerDAOImpl(Map<UUID , Trainer> trainers) {
-        trainersMap = new HashMap<>();
+    public TrainerDAOImpl(Map<UUID , Trainer> trainersMap) {
+        this.trainersMap = trainersMap;
     }
 
 
     @Override
     public void create(Trainer trainer) {
-        trainersMap.put(trainer.getUserId() , trainer);
+        trainersMap.putIfAbsent(trainer.getUserId() , trainer);
     }
 
     @Override

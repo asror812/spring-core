@@ -52,7 +52,7 @@ public class TrainerService {
 
         Trainer newTrainer = new Trainer();
         UUID userId = UUID.randomUUID();
-        String username = newTrainer.getFirstName()+ "." + newTrainer.getLastName();
+        String username = createDTO.getFirstName()+ "." + createDTO.getLastName();
 
         newTrainer.setUserId(userId);
         newTrainer.setFirstName(createDTO.getFirstName());
@@ -74,6 +74,7 @@ public class TrainerService {
                  return newTrainer;
              }
         }
+
 
         trainerDAO.create(newTrainer);
 

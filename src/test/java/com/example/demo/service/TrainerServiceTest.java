@@ -21,22 +21,29 @@ public class TrainerServiceTest {
 
 
 
-    private final TrainerService trainerService;
-
-    @Autowired
-    public TrainerServiceTest(TrainerService traineeService) {
-        this.trainerService = traineeService;
-    }
+    private  TrainerService trainerService;
 
 
 
     private PasswordGenerator passwordGenerator;
 
-    private Map<UUID, Trainer> trainersMap;
+
+    private final Map<UUID, Trainer> trainersMap;
+
+
+    @Autowired
+    public TrainerServiceTest(Map<UUID , Trainer> trainersMap) {
+        this.trainersMap = trainersMap;
+    }
+
+    @Autowired
+    public void setTrainerService(TrainerService trainerService) {
+        this.trainerService = trainerService;
+    }
 
     @BeforeEach
     public void setUp() {
-        trainersMap = new HashMap<>();
+        trainersMap.clear();
     }
 
 
@@ -45,6 +52,7 @@ public class TrainerServiceTest {
     public void createTrainerTest() {
         TrainerCreateDTO createDTO = new TrainerCreateDTO();
         String password = passwordGenerator.generate();
+
         createDTO.setFirstName("Asror");
         createDTO.setLastName("R");
         createDTO.setSpecialization("M");
@@ -78,7 +86,8 @@ public class TrainerServiceTest {
 
         trainerService.update(trainerId, updateDTO);
 
-        Assertions.assertEquals("Asror.Ruzimurodov", trainersMap.get(trainer.getUserId()).getUsername());
+        Assertions.assertEquals("Asror.R", trainersMap.get(trainer.getUserId()).getUsername());
+        Assertions.assertEquals("Ruzimurodov", trainersMap.get(trainer.getUserId()).getLastName());
         Assertions.assertEquals("asdfg54321", trainersMap.get(trainer.getUserId()).getPassword());
     }
 
@@ -86,11 +95,6 @@ public class TrainerServiceTest {
     @Autowired
     public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
         this.passwordGenerator = passwordGenerator;
-    }
-
-    @Autowired
-    public void setTrainersMap(Map<UUID, Trainer> trainersMap) {
-        this.trainersMap = trainersMap;
     }
 
 }
