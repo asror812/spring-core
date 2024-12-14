@@ -1,13 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.model.Training;
 import com.example.demo.storage.PasswordGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -15,6 +12,10 @@ import java.util.UUID;
 public class TrainingServiceTest {
 
     private TrainingService trainingService;
+    private TrainerService trainerService;
+    private TraineeService traineeService;
+
+
     private PasswordGenerator passwordGenerator;
 
 
@@ -36,6 +37,21 @@ public class TrainingServiceTest {
         this.passwordGenerator = passwordGenerator;
     }
 
+    @Autowired
+    public void setTrainingsService(TrainingService trainingService) {
+        this.trainingService = trainingService;
+    }
+
+    @Autowired
+    public void setTraineeService(TraineeService traineeService) {
+        this.traineeService = traineeService;
+    }
+
+    @Autowired
+    public void setTrainerService(TrainerService trainerService) {
+        this.trainerService = trainerService;
+    }
+
 
 
     @BeforeEach
@@ -44,8 +60,7 @@ public class TrainingServiceTest {
     }
 
 
-    public void createTrainingTest(TraineeCreateDTO createDTO) {
-
+    public void createTrainingTest() {
 
     }
 

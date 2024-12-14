@@ -22,6 +22,7 @@ public class TraineesMapInitializer {
 
     @Value("${trainees.file.path}")
     private String path;
+
     private final Map<UUID, Trainee> traineesMap ;
     private final Logger LOGGER = LoggerFactory.getLogger(TraineesMapInitializer.class);
 
@@ -37,7 +38,7 @@ public class TraineesMapInitializer {
 
         if(file.exists()) {
             try{
-                LOGGER.info("Инициализация начинается");
+                LOGGER.info("Initializing Trainees Map");
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
                 List<Trainee> trainers = objectMapper.readValue(new File(path) , new TypeReference<>() {});
@@ -45,11 +46,11 @@ public class TraineesMapInitializer {
                 for (Trainee trainee : trainers) {
                     traineesMap.put(trainee.getUserId(), trainee);
                 }
-                LOGGER.info("Инициализация прошла успешно");
+                LOGGER.info("Initialized Trainees Map");
             }catch (IOException e){
-                LOGGER.error("Ошибка при чтении файла: {}", e.getMessage());
+                LOGGER.error("Error while reading file: {}", e.getMessage());
             }
-        }else LOGGER.error("Файл не найден");
+        }else LOGGER.error("File does not exist");
 
         return traineesMap;
     }

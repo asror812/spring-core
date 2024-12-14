@@ -11,8 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -71,8 +69,9 @@ public class TrainerServiceTest {
     @Test
     public void updateTrainerTest() {
         UUID trainerId = UUID.randomUUID();
-        Trainer trainer = new Trainer(trainerId, "Asror", "R", "Asror.R" ,
-                "G"  , passwordGenerator.generate() , false );
+        Trainer trainer = new Trainer
+                (trainerId, "Asror", "R", "Asror.R" ,
+                "G"  , false ,  passwordGenerator.generate()  );
 
 
         trainersMap.put(trainerId, trainer);

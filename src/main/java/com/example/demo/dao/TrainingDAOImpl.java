@@ -14,7 +14,7 @@ public class TrainingDAOImpl implements TrainingDAO {
 
     @Autowired
     public TrainingDAOImpl(Map<UUID, Training> trainings) {
-        this.trainings = new HashMap<>();
+        this.trainings = trainings;
     }
 
 
@@ -30,7 +30,6 @@ public class TrainingDAOImpl implements TrainingDAO {
 
     @Override
     public Training selectById(UUID id) {
-
         return trainings.get(id);
     }
 }

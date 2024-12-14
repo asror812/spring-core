@@ -41,7 +41,7 @@ public class TrainingsMapInitializer {
 
         if(file.exists()) {
             try{
-                LOGGER.info("Инициализация начинается");
+                LOGGER.info("Initializing Trainings map");
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
                 List<Training> trainers = objectMapper.readValue(new File(path) , new TypeReference<>() {});
@@ -51,11 +51,11 @@ public class TrainingsMapInitializer {
                     trainingsMap.put(primaryKey, trainee);
                 }
 
-                LOGGER.info("Инициализация прошла успешно");
+                LOGGER.info("Initialized Trainings map");
             }catch (IOException e){
-                LOGGER.error("Ошибка при чтении файла: {}", e.getMessage());
+                LOGGER.error("Error while reading file : {}", e.getMessage());
             }
-        }else LOGGER.error("Файл не найден");
+        }else LOGGER.error("File does not exist");
 
     }
 }

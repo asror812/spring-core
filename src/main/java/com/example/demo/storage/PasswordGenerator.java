@@ -1,11 +1,8 @@
 package com.example.demo.storage;
 
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 
@@ -19,16 +16,17 @@ public class PasswordGenerator {
 
         StringBuilder password = new StringBuilder();
 
-        List<Character> letters = new ArrayList<>(
-                List.of('a' , 'b' , 'c' , 'd' , 'e' , 'f' , 'g' , 'h'  , 'i' ,
-                        'j' , 'k' , 'l' , 'm' ,'n' , 'q' , 'r' , 's' , 't' , 'u' ,'v' ,  'w' ,'x' , 'y' , 'z'));
+        char[] letters = new char[] {'a' , 'b' , 'c' , 'd' , 'e' , 'f' , 'g' ,
+                            'h'  , 'i' , 'j' , 'k' , 'l' , 'm' ,'n' , 'o' , 'p', 
+                            'q' , 'r' , 's' , 't' , 'u' ,'v' , 'w' ,'x' , 'y' , 
+                            'z' , 
+                            'A' , 'B' , 'C' , 'D' , 'E' , 'F' , 'G' , 'H', 
+                            'I' , 'J' , 'K' , 'L' , 'M' , 'N'  , 'O' , 'P' , 
+                            'Q' ,'R' , 'S' , 'T' , 'U','V' , 'W' , 'X' ,
+                            'Y' , 'Z'};
 
         for(int j = 0 ; j < 10 ; j++) {
-
-            int i = random.nextInt(2);
-
-            if (i == 0) password.append(random.nextInt(10));
-            else password.append(letters.get(random.nextInt(letters.size())));
+            password.append(letters[random.nextInt(letters.length)]);
         }
 
         return password.toString();

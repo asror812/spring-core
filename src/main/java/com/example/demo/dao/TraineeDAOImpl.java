@@ -37,7 +37,6 @@ public class TraineeDAOImpl implements TraineeDAO {
 
     @Override
     public void update(Trainee trainee) {
-
          traineesMap.remove(trainee.getUserId());
          traineesMap.put(trainee.getUserId(), trainee);
     }
