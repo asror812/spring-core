@@ -7,9 +7,7 @@ import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.model.Trainee;
 import com.example.demo.utils.PasswordGenerator;
-
 import lombok.Getter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

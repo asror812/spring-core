@@ -3,7 +3,6 @@ package com.example.demo.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -12,8 +11,6 @@ import com.example.demo.dao.GenericDAO;
 
 @Service
 public abstract class GenericService<ENTITY , ID , CREATE_DTO >   {
-
-    
 
     private final static Logger LOGGER = LoggerFactory.getLogger(GenericService.class);
 
@@ -46,7 +43,8 @@ public abstract class GenericService<ENTITY , ID , CREATE_DTO >   {
 
 
     public ENTITY create(CREATE_DTO createDTO){
-        createDTO.
+        
+        throw new UnsupportedOperationException();
     }
 
 
