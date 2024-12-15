@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Training;
-import com.example.demo.storage.PasswordGenerator;
+import com.example.demo.utils.PasswordGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

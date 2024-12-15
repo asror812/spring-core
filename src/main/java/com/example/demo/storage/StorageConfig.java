@@ -6,7 +6,6 @@ import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import java.util.*;
 
 @Configuration

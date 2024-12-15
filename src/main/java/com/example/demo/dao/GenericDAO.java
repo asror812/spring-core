@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GenericDAO<ENTITY , ID> {
      
-    void create(ENTITY entity , ID id);
+    void create(ID id , ENTITY entity);
     List<ENTITY> select();
     
     Optional<ENTITY> selectById(ID id);

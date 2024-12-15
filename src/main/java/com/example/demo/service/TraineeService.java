@@ -1,7 +1,6 @@
 package com.example.demo.service;
 
 
-import com.example.demo.dao.GenericDAO;
 import com.example.demo.dao.TraineeDAO;
 import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
@@ -12,9 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -23,32 +21,27 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
 
 
     private final TraineeDAO genericDao; 
-    
     private static final  Logger LOGGER = LoggerFactory.getLogger(TraineeService.class);
-
-    
     private PasswordGenerator passwordGenerator;
 
+    @Autowired
+    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
+        this.passwordGenerator = passwordGenerator;
+    }
 
-    private final TraineeDAO traineeDAO;
 
     @Autowired
-    public TraineeService(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
+    public TraineeService(TraineeDAO dao) {
+        this.genericDao = dao;
     }
 
-    public void delete(UUID id) {
-        traineeDAO.delete(id);
-    }
-
+    @Override
     public Trainee create(TraineeCreateDTO createDTO) {
         Trainee newTrainee = new Trainee();
 
         UUID id = UUID.randomUUID();
         String userName = createDTO.getFirstName()  + "." + createDTO.getLastName();
-        String password = passwordGenerator.generate();
-        
-        
+        String password = passwordGenerator.generate();    
         
         newTrainee.setUserId(id);
         newTrainee.setFirstName(createDTO.getFirstName());
@@ -60,50 +53,52 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
         newTrainee.setPassword(password);
                 
 
-        for (Trainee trainee1 : traineeDAO.select()) {
+        for (Trainee trainee1 : genericDao.select()) {
             if(Objects.equals(trainee1.getFirstName(), createDTO.getFirstName())
-                && Objects.equals(trainee1.getLastName(), createDTO.getLastName())
-               ){
+                && Objects.equals(trainee1.getLastName(), createDTO.getLastName())){
 
                 newTrainee.setUsername(userName + newTrainee.getUserId());
-                traineeDAO.create(newTrainee);
+                genericDao.create(id, newTrainee);
 
                 LOGGER.info("Trainer with username {}  successfully created. Password : {} ", newTrainee.getUsername() , password);
 
                 return newTrainee;
             }
         }
-
-
-        traineeDAO.create(newTrainee);
+        genericDao.create(id , newTrainee );
 
         LOGGER.info("Trainer with username {} successfully created. Password : {}",  userName , password );
 
         return newTrainee;
     }
+        
 
-    @Autowired
-    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
-        this.passwordGenerator = passwordGenerator;
-    }
+   
+    public void update(UUID id , TraineeUpdateDTO updateDTO) {
+        Optional<Trainee> existingTrainee = genericDao.selectById(id);
 
-    public Trainee update(UUID id , TraineeUpdateDTO updateDTO) {
-        Trainee trainee = traineeDAO.selectById(id);
+        if(existingTrainee.isEmpty()){
+           LOGGER.error("Trainee with id {} not found", id);
+           throw new IllegalArgumentException("Trainee with id " + id + " not found");
+        }
 
-        if(trainee == null)  LOGGER.error("Trainee with id {} not found", id);
+            Trainee trainee  = existingTrainee.get();
 
-        else {
             trainee.setFirstName(updateDTO.getFirstName());
             trainee.setLastName(updateDTO.getLastName());
             trainee.setPassword(updateDTO.getPassword());
             trainee.setAddress(updateDTO.getAddress());
             trainee.setDateOfBirth(updateDTO.getDateOfBirth());
 
-            traineeDAO.update(trainee);
+            genericDao.update(trainee);
 
             LOGGER.info("Trainee with id {} successfully updated" , trainee.getUserId());
-        }
-
-        return  trainee;
     }
+
+
+
+    public void delete(UUID id) {
+        genericDao.delete(id);
+    }
+
 }

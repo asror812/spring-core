@@ -15,8 +15,9 @@ public abstract class GenericDAOImpl<ENTITY , ID> implements GenericDAO<ENTITY ,
 
 
      @Override
-     public void create(ENTITY entity , ID id) {
-         getStorageMap().putIfAbsent(id, entity);
+     public void create(ID id ,ENTITY entity) {
+         getStorageMap().put(id , entity);
+         
      }
 
     @Override

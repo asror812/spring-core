@@ -4,7 +4,7 @@ package com.example.demo.service;
 import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.model.Trainee;
-import com.example.demo.storage.PasswordGenerator;
+import com.example.demo.utils.PasswordGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,12 +35,7 @@ public class TraineeServiceTest {
 
     @Test
     public void createTraineeTest() {
-       TraineeCreateDTO createDTO = new TraineeCreateDTO();
-
-        createDTO.setFirstName("Asror");
-        createDTO.setLastName("R");
-        createDTO.setDateOfBirth(LocalDate.of(2004 , 8 , 12));
-        createDTO.setAddress("Tashkent");
+       TraineeCreateDTO createDTO = new TraineeCreateDTO("Asror", "R", "Tashkent" , LocalDate.of(2004 , 8 , 12));
 
         traineeService.create(createDTO);
 

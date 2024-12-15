@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import com.example.demo.dao.GenericDAO;
+
 
 @Service
 public abstract class GenericService<ENTITY , ID , CREATE_DTO >   {
@@ -20,15 +20,12 @@ public abstract class GenericService<ENTITY , ID , CREATE_DTO >   {
     public Optional<ENTITY> findById(ID id){
         
         Optional<ENTITY> existingEntity = getGenericDao().selectById(id);
-        
-        if(existingEntity.isEmpty()){
-            
-            LOGGER.warn("Trainer with id {} not found", id);
 
+        if(existingEntity.isEmpty()){            
+            LOGGER.warn("Trainer with id {} not found", id);
             return Optional.empty() ;
         }
-
-
+        
         return Optional.of(existingEntity.get());
     }
 
@@ -42,10 +39,7 @@ public abstract class GenericService<ENTITY , ID , CREATE_DTO >   {
     }
 
 
-    public ENTITY create(CREATE_DTO createDTO){
-        
-        throw new UnsupportedOperationException();
-    }
+    protected abstract ENTITY create(CREATE_DTO createDTO);
 
 
 

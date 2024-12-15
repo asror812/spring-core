@@ -3,7 +3,6 @@ package com.example.demo.storage;
 import com.example.demo.model.Trainee;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,6 @@ public class TraineesMapInitializer {
             try{
                 LOGGER.info("Initializing Trainees Map");
                 ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.registerModule(new JavaTimeModule());
                 List<Trainee> trainers = objectMapper.readValue(new File(path) , new TypeReference<>() {});
 
                 for (Trainee trainee : trainers) {
