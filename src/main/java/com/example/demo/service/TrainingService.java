@@ -20,7 +20,12 @@ import java.util.UUID;
 public class TrainingService {
 
     private final TrainingDAO trainingDAO;
+<<<<<<< HEAD
     private final Logger logger = LoggerFactory.getLogger(TrainingService.class);
+=======
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainingService.class);
+>>>>>>> 1776921 (Generalize code)
 
 
     private TrainerDAO trainerDAO;
@@ -35,7 +40,9 @@ public class TrainingService {
 
         List<Training> trainings = trainingDAO.select();
 
-        trainings.forEach(training -> {logger.info(training.toString());});
+        trainings.forEach(training -> {
+            LOGGER.info(training.toString());
+        });
 
         return trainings;
     }
@@ -44,10 +51,10 @@ public class TrainingService {
         Training trainer = trainingDAO.selectById(id);
 
         if(trainer == null) {
-            logger.warn("Trainer with id {} not found", id);
+            LOGGER.warn("Trainer with id {} not found", id);
         }
 
-        else logger.info("Trainer with id {} found", id);
+        else LOGGER.info("Trainer with id {} found", id);
 
         return trainer;
     }
@@ -75,7 +82,7 @@ public class TrainingService {
 
         trainingDAO.create(newTraining);
 
-        logger.info("Training with trainer id {} , trainee id {} , training date {} , training type {} successfully created" ,
+        LOGGER.info("Training with trainer id {} , trainee id {} , training date {} , training type {} successfully created" ,
                 newTraining.getTrainerId() , newTraining.getTraineeId() , newTraining.getTrainingDate(), newTraining.getTrainingType());
 
         return newTraining;

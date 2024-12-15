@@ -1,35 +1,25 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.Training;
+
+import lombok.Getter;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 
-@Component
-public class TrainingDAOImpl implements TrainingDAO {
+@Repository
+@Getter
+public class TrainingDAOImpl extends GenericDAOImpl<Training , UUID> implements TrainingDAO {
 
-    private final Map<UUID, Training> trainings;
+    private final Map<UUID, Training> storageMap;
 
     @Autowired
-    public TrainingDAOImpl(Map<UUID, Training> trainings) {
-        this.trainings = trainings;
-    }
-
-
-    @Override
-    public void create(Training training) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public List<Training> select() {
-        return new ArrayList<>(trainings.values());
-    }
-
-    @Override
-    public Training selectById(UUID id) {
-        return trainings.get(id);
+    public TrainingDAOImpl(@Qualifier("trainingsMap") Map<UUID, Training> storageMap) {
+        this.storageMap = storageMap;
     }
 }

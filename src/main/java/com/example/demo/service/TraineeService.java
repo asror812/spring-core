@@ -1,11 +1,15 @@
 package com.example.demo.service;
 
 
+import com.example.demo.dao.GenericDAO;
 import com.example.demo.dao.TraineeDAO;
 import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.model.Trainee;
-import com.example.demo.storage.PasswordGenerator;
+import com.example.demo.utils.PasswordGenerator;
+
+import lombok.Getter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,39 +20,23 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Service
-public class TraineeService {
+@Getter
+public class TraineeService extends GenericService<Trainee , UUID , TraineeCreateDTO> {
 
 
-    private final Logger logger = LoggerFactory.getLogger(TraineeService.class);
+    private final TraineeDAO genericDao; 
+    
+    private static final  Logger LOGGER = LoggerFactory.getLogger(TraineeService.class);
 
+    
     private PasswordGenerator passwordGenerator;
 
 
     private final TraineeDAO traineeDAO;
 
+    @Autowired
     public TraineeService(TraineeDAO traineeDAO) {
         this.traineeDAO = traineeDAO;
-    }
-
-
-    public Trainee findById(UUID id) {
-        Trainee trainee = traineeDAO.selectById(id);
-
-        if(trainee == null)  logger.warn("Trainee with id {} not found", id);
-
-        else logger.info("Trainee with id {} found", id);
-
-        return trainee;
-    }
-
-    public List<Trainee> findAll() {
-        List<Trainee> trainees = traineeDAO.select();
-
-        for (Trainee trainee : trainees) {
-            logger.info(trainee.toString());
-        }
-
-        return trainees;
     }
 
     public void delete(UUID id) {
@@ -61,7 +49,9 @@ public class TraineeService {
         UUID id = UUID.randomUUID();
         String userName = createDTO.getFirstName()  + "." + createDTO.getLastName();
         String password = passwordGenerator.generate();
-
+        
+        
+        
         newTrainee.setUserId(id);
         newTrainee.setFirstName(createDTO.getFirstName());
         newTrainee.setLastName(createDTO.getLastName());
@@ -70,7 +60,7 @@ public class TraineeService {
         newTrainee.setAddress(createDTO.getAddress());
         newTrainee.setDateOfBirth(createDTO.getDateOfBirth());
         newTrainee.setPassword(password);
-
+                
 
         for (Trainee trainee1 : traineeDAO.select()) {
             if(Objects.equals(trainee1.getFirstName(), createDTO.getFirstName())
@@ -80,7 +70,7 @@ public class TraineeService {
                 newTrainee.setUsername(userName + newTrainee.getUserId());
                 traineeDAO.create(newTrainee);
 
-                logger.info("Trainer with username {}  successfully created. Password : {} ", newTrainee.getUsername() , password);
+                LOGGER.info("Trainer with username {}  successfully created. Password : {} ", newTrainee.getUsername() , password);
 
                 return newTrainee;
             }
@@ -89,7 +79,7 @@ public class TraineeService {
 
         traineeDAO.create(newTrainee);
 
-        logger.info("Trainer with username {} successfully created. Password : {}",  userName , password );
+        LOGGER.info("Trainer with username {} successfully created. Password : {}",  userName , password );
 
         return newTrainee;
     }
@@ -102,7 +92,7 @@ public class TraineeService {
     public Trainee update(UUID id , TraineeUpdateDTO updateDTO) {
         Trainee trainee = traineeDAO.selectById(id);
 
-        if(trainee == null)  logger.error("Trainee with id {} not found", id);
+        if(trainee == null)  LOGGER.error("Trainee with id {} not found", id);
 
         else {
             trainee.setFirstName(updateDTO.getFirstName());
@@ -113,7 +103,7 @@ public class TraineeService {
 
             traineeDAO.update(trainee);
 
-            logger.info("Trainee with id {} successfully updated" , trainee.getUserId());
+            LOGGER.info("Trainee with id {} successfully updated" , trainee.getUserId());
         }
 
         return  trainee;

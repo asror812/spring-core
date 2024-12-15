@@ -1,40 +1,30 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.Trainer;
+
+import lombok.Getter;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-@Component
-public class TrainerDAOImpl implements TrainerDAO {
+@Repository
+@Getter
+public class TrainerDAOImpl extends GenericDAOImpl<Trainer , UUID> implements TrainerDAO {
 
-    private final Map<UUID , Trainer> trainersMap ;
+    private final Map<UUID , Trainer> storageMap ;
 
     @Autowired
-    public TrainerDAOImpl(Map<UUID , Trainer> trainersMap) {
-        this.trainersMap = trainersMap;
-    }
-
-
-    @Override
-    public void create(Trainer trainer) {
-        trainersMap.putIfAbsent(trainer.getUserId() , trainer);
-    }
-
-    @Override
-    public List<Trainer> select() {
-        return new ArrayList<>(trainersMap.values());
-    }
-
-    @Override
-    public Trainer selectById(UUID id) {
-        return trainersMap.get(id);
+    public TrainerDAOImpl(@Qualifier("trainersMap") Map<UUID , Trainer> storageMap) {
+        this.storageMap = storageMap;
     }
 
     @Override
     public void update(Trainer trainer) {
-         trainersMap.put(trainer.getUserId() , trainer);
+         storageMap.put(trainer.getUserId() , trainer);
     }
 
 }

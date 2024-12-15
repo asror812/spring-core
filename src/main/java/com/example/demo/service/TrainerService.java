@@ -17,8 +17,7 @@ import java.util.UUID;
 @Service
 public class TrainerService {
 
-
-    private final Logger logger = LoggerFactory.getLogger(TrainerService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
     private final TrainerDAO trainerDAO;
 
     @Autowired
@@ -30,7 +29,11 @@ public class TrainerService {
 
         List<Trainer> trainers = trainerDAO.select();
 
-        trainers.forEach(trainer -> {logger.info(trainer.toString());});
+        trainers.forEach(trainer -> 
+        {
+            LOGGER.info(trainer.toString());
+        }
+        );
 
         return trainers;
     }
@@ -39,10 +42,10 @@ public class TrainerService {
         Trainer trainer = trainerDAO.selectById(id);
 
         if(trainer == null) {
-            logger.warn("Trainer with id {} not found", id);
+            LOGGER.warn("Trainer with id {} not found", id);
         }
 
-        else logger.info("Trainer with id {} found", id);
+        else LOGGER.info("Trainer with id {} found", id);
 
         return trainer;
     }
@@ -68,7 +71,7 @@ public class TrainerService {
 
                  trainerDAO.create(newTrainer);
 
-                 logger.info("Trainer with username {} successfully created . Specialization : {}" ,
+                 LOGGER.info("Trainer with username {} successfully created . Specialization : {}" ,
                          newTrainer.getUsername() , newTrainer.getSpecialization());
 
                  return newTrainer;
@@ -78,7 +81,7 @@ public class TrainerService {
 
         trainerDAO.create(newTrainer);
 
-        logger.info("Trainer with username {} successfully created. Specialization: {} successfully created" ,
+        LOGGER.info("Trainer with username {} successfully created. Specialization: {} successfully created" ,
                 username  ,  newTrainer.getSpecialization());
 
 
@@ -89,7 +92,7 @@ public class TrainerService {
          Trainer trainer = trainerDAO.selectById(id);
 
          if(trainer == null) {
-             logger.error("Trainer with id {} not found", id);
+             LOGGER.error("Trainer with id {} not found", id);
          }
          else {
              trainer.setFirstName(updateDTO.getFirstName());
