@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-
 import com.example.demo.dao.TraineeDAO;
 import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
@@ -60,14 +59,14 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
                 newTrainee.setUsername(userName + newTrainee.getUserId());
                 genericDao.create(id, newTrainee);
 
-                LOGGER.info("Trainer with username {}  successfully created. Password : {} ", newTrainee.getUsername() , password);
+                LOGGER.info("{}  successfully created" , newTrainee);
 
                 return newTrainee;
             }
         }
         genericDao.create(id , newTrainee );
 
-        LOGGER.info("Trainer with username {} successfully created. Password : {}",  userName , password );
+        LOGGER.info("{} successfully created",  newTrainee);
 
         return newTrainee;
     }
@@ -81,7 +80,7 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
            LOGGER.error("Trainee with id {} not found", id);
            throw new IllegalArgumentException("Trainee with id " + id + " not found");
         }
-
+            
             Trainee trainee  = existingTrainee.get();
 
             trainee.setFirstName(updateDTO.getFirstName());
@@ -92,7 +91,7 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
 
             genericDao.update(trainee);
 
-            LOGGER.info("Trainee with id {} successfully updated" , trainee.getUserId());
+            LOGGER.info("{}  successfully updated " , trainee);
     }
 
 

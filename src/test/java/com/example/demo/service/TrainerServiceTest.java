@@ -59,20 +59,26 @@ public class TrainerServiceTest {
     public void updateTrainerTest() {
         UUID trainerId = UUID.randomUUID();
         Trainer trainer = new Trainer
-                (trainerId, "A", "R", "A.R" ,
-                "G"  , false ,  passwordGenerator.generate()  );
-
+                (trainerId, "A", "R", "A.A" ,
+                "12345678"  , false , "L" );
 
         trainersMap.put(trainerId, trainer);
-
 
         TrainerUpdateDTO updateDTO = new TrainerUpdateDTO("Abror" , "Ruzimurodov" , "asdfg54321", "K" );
 
         trainerService.update(trainerId, updateDTO);
 
-        Assertions.assertEquals("Abror.R", trainersMap.get(trainer.getUserId()).getUsername());
+
+
+        Assertions.assertEquals(false, trainersMap.get(trainer.getUserId()).isActive());
+        Assertions.assertEquals("Abror", trainersMap.get(trainer.getUserId()).getFirstName());
         Assertions.assertEquals("Ruzimurodov", trainersMap.get(trainer.getUserId()).getLastName());
         Assertions.assertEquals("asdfg54321", trainersMap.get(trainer.getUserId()).getPassword());
+        Assertions.assertEquals("K", trainersMap.get(trainer.getUserId()).getSpecialization());
+
+
+        Assertions.assertEquals("A.A", trainersMap.get(trainer.getUserId()).getUsername());
+     
     }
 
 

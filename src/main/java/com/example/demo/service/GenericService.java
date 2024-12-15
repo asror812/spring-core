@@ -32,7 +32,7 @@ public abstract class GenericService<ENTITY , ID , CREATE_DTO >   {
     public List<ENTITY> findAll(){
         List<ENTITY> values = new ArrayList<>();
         for (ENTITY entity : values) {
-            LOGGER.info(" {} ", entity);
+            LOGGER.info("{}", entity);
         }  
 
         return values;

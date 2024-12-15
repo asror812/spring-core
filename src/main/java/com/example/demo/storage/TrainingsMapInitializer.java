@@ -4,10 +4,13 @@ package com.example.demo.storage;
 import com.example.demo.model.Training;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.io.File;
@@ -29,7 +32,7 @@ public class TrainingsMapInitializer {
     private final Map<UUID , Training> trainingsMap;
 
     @Autowired
-    public TrainingsMapInitializer(Map<UUID, Training> trainingsMap) {
+    public TrainingsMapInitializer(@Qualifier("trainingsMap") Map<UUID, Training> trainingsMap) {
         this.trainingsMap = trainingsMap;
     }
 
@@ -42,6 +45,7 @@ public class TrainingsMapInitializer {
             try{
                 LOGGER.info("Initializing Trainings map");
                 ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
                 List<Training> trainers = objectMapper.readValue(new File(path) , new TypeReference<>() {});
 
                 for (Training trainee : trainers) {
@@ -53,7 +57,7 @@ public class TrainingsMapInitializer {
             }catch (IOException e){
                 LOGGER.error("Error while reading file : {}", e.getMessage());
             }
-        }else LOGGER.error("File does not exist");
+        }else LOGGER.error("File not found");
 
     }
 }

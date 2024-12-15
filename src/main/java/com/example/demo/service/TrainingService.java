@@ -8,9 +8,7 @@ import com.example.demo.dto.TrainingCreateDTO;
 import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
-
 import lombok.Getter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +56,7 @@ public class TrainingService {
 
         genericDao.create(id , newTraining);
 
-        LOGGER.info("Training with trainer id {} , trainee id {} , training date {} , training type {} successfully created" ,
-                newTraining.getTrainerId() , newTraining.getTraineeId() , newTraining.getTrainingDate(), newTraining.getTrainingType());
+        LOGGER.info("{} successfully created" , newTraining);
 
         return newTraining;
 

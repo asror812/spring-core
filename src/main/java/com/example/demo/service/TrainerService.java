@@ -33,6 +33,7 @@ public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCrea
         UUID id = UUID.randomUUID();
         String username = createDTO.getFirstName()+ "." + createDTO.getLastName();
 
+        
         newTrainer.setUserId(id);
         newTrainer.setFirstName(createDTO.getFirstName());
         newTrainer.setLastName(createDTO.getLastName());
@@ -47,8 +48,7 @@ public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCrea
 
                  genericDao.create(id ,newTrainer);
 
-                 LOGGER.info("Trainer with username {} successfully created . Specialization : {}" ,
-                         newTrainer.getUsername() , newTrainer.getSpecialization());
+                 LOGGER.info("{} successfully created."  , newTrainer);
 
                  return newTrainer;
              }
@@ -57,7 +57,7 @@ public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCrea
 
         genericDao.create(id ,newTrainer);
 
-        LOGGER.info("Trainer with username {} successfully created. Specialization: {} successfully created" ,
+        LOGGER.info("{} successfully created" ,
                 username  ,  newTrainer.getSpecialization());
 
 
@@ -68,10 +68,11 @@ public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCrea
     public void update(UUID id , TrainerUpdateDTO updateDTO) {
          Optional<Trainer> existingTrainer = genericDao.selectById(id);
 
-         if(existingTrainer == null) {
-             LOGGER.error("Trainer with id {} not found", id);
+         if(existingTrainer.isEmpty()) {
+            LOGGER.error("Trainer with id {} not found", id);
             throw new IllegalArgumentException("Trainer with id " + id + " not found");
          }
+
             Trainer trainer = existingTrainer.get();
             
             trainer.setFirstName(updateDTO.getFirstName());

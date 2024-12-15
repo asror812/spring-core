@@ -3,10 +3,13 @@ package com.example.demo.storage;
 import com.example.demo.model.Trainer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.io.File;
@@ -26,7 +29,7 @@ public class TrainersMapInitializer {
     private final Map<UUID , Trainer>  trainersMap;
 
     @Autowired
-    public TrainersMapInitializer(Map<UUID , Trainer> trainersMap) {
+    public TrainersMapInitializer(@Qualifier("trainersMap") Map<UUID , Trainer> trainersMap) {
         this.trainersMap = trainersMap;
     }
 
@@ -38,6 +41,7 @@ public class TrainersMapInitializer {
             try{
                 LOGGER.info("Initializing Trainers map");
                 ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
                 List<Trainer> trainers = objectMapper.readValue(file, new TypeReference<>() {
                 });
 
@@ -49,6 +53,6 @@ public class TrainersMapInitializer {
                 LOGGER.error("Error while reading a file: {}", e.getMessage());
             }
         }
-        else LOGGER.error("File does not exist");
+        else LOGGER.error("File not found");
     }
 }
