@@ -1,6 +1,5 @@
 package com.example.demo.dao;
 
-import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
