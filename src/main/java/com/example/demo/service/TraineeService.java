@@ -1,67 +1,52 @@
 package com.example.demo.service;
 
-
 import com.example.demo.dao.TraineeDAO;
 import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.model.Trainee;
-import com.example.demo.storage.PasswordGenerator;
+import com.example.demo.utils.PasswordGenerator;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class TraineeService {
+@Getter
+public class TraineeService extends GenericService<Trainee , UUID , TraineeCreateDTO> {
 
 
-    private final Logger logger = LoggerFactory.getLogger(TraineeService.class);
-
+    private final TraineeDAO genericDao; 
+    private static final  Logger LOGGER = LoggerFactory.getLogger(TraineeService.class);
     private PasswordGenerator passwordGenerator;
 
-
-    private final TraineeDAO traineeDAO;
-
-    public TraineeService(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
+    @Autowired
+    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
+        this.passwordGenerator = passwordGenerator;
     }
 
 
-    public Trainee findById(UUID id) {
-        Trainee trainee = traineeDAO.selectById(id);
-
-        if(trainee == null)  logger.warn("Trainee with id {} not found", id);
-
-        else logger.info("Trainee with id {} found", id);
-
-        return trainee;
+    @Autowired
+    public TraineeService(TraineeDAO dao) {
+        this.genericDao = dao;
     }
 
-    public List<Trainee> findAll() {
-        List<Trainee> trainees = traineeDAO.select();
+    @Override
+    public Trainee create(TraineeCreateDTO createDTO) {
 
-        for (Trainee trainee : trainees) {
-            logger.info(trainee.toString());
+        if(createDTO == null){
+            throw new IllegalArgumentException();
         }
 
-        return trainees;
-    }
-
-    public void delete(UUID id) {
-        traineeDAO.delete(id);
-    }
-
-    public Trainee create(TraineeCreateDTO createDTO) {
         Trainee newTrainee = new Trainee();
 
         UUID id = UUID.randomUUID();
         String userName = createDTO.getFirstName()  + "." + createDTO.getLastName();
-        String password = passwordGenerator.generate();
-
+        String password = passwordGenerator.generate();    
+        
         newTrainee.setUserId(id);
         newTrainee.setFirstName(createDTO.getFirstName());
         newTrainee.setLastName(createDTO.getLastName());
@@ -70,52 +55,60 @@ public class TraineeService {
         newTrainee.setAddress(createDTO.getAddress());
         newTrainee.setDateOfBirth(createDTO.getDateOfBirth());
         newTrainee.setPassword(password);
+                
 
-
-        for (Trainee trainee1 : traineeDAO.select()) {
+        for (Trainee trainee1 : genericDao.select()) {
             if(Objects.equals(trainee1.getFirstName(), createDTO.getFirstName())
-                && Objects.equals(trainee1.getLastName(), createDTO.getLastName())
-               ){
+                && Objects.equals(trainee1.getLastName(), createDTO.getLastName())){
 
                 newTrainee.setUsername(userName + newTrainee.getUserId());
-                traineeDAO.create(newTrainee);
+                genericDao.create(id, newTrainee);
 
-                logger.info("Trainer with username {}  successfully created. Password : {} ", newTrainee.getUsername() , password);
+                LOGGER.info("{}  successfully created" , newTrainee);
 
                 return newTrainee;
             }
         }
+        genericDao.create(id , newTrainee );
 
-
-        traineeDAO.create(newTrainee);
-
-        logger.info("Trainer with username {} successfully created. Password : {}",  userName , password );
+        LOGGER.info("{} successfully created",  newTrainee);
 
         return newTrainee;
     }
+        
 
-    @Autowired
-    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
-        this.passwordGenerator = passwordGenerator;
-    }
+   
+    public void update(UUID id , TraineeUpdateDTO updateDTO) {
 
-    public Trainee update(UUID id , TraineeUpdateDTO updateDTO) {
-        Trainee trainee = traineeDAO.selectById(id);
 
-        if(trainee == null)  logger.error("Trainee with id {} not found", id);
+        if(id == null || updateDTO == null){
+            throw new IllegalArgumentException();
+        }
+        
+        Optional<Trainee> existingTrainee = genericDao.selectById(id);
 
-        else {
+        if(existingTrainee.isEmpty()){
+           LOGGER.error("Trainee with id {} not found", id);
+           throw new IllegalArgumentException("Trainee with id " + id + " not found");
+        }
+            
+            Trainee trainee  = existingTrainee.get();
+
             trainee.setFirstName(updateDTO.getFirstName());
             trainee.setLastName(updateDTO.getLastName());
             trainee.setPassword(updateDTO.getPassword());
             trainee.setAddress(updateDTO.getAddress());
             trainee.setDateOfBirth(updateDTO.getDateOfBirth());
 
-            traineeDAO.update(trainee);
+            genericDao.update(trainee);
 
-            logger.info("Trainee with id {} successfully updated" , trainee.getUserId());
-        }
-
-        return  trainee;
+            LOGGER.info("{}  successfully updated " , trainee);
     }
+
+
+
+    public void delete(UUID id) {
+        genericDao.delete(id);
+    }
+
 }

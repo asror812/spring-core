@@ -4,10 +4,12 @@ import com.example.demo.model.Trainee;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -22,11 +24,12 @@ public class TraineesMapInitializer {
 
     @Value("${trainees.file.path}")
     private String path;
+
     private final Map<UUID, Trainee> traineesMap ;
     private final Logger LOGGER = LoggerFactory.getLogger(TraineesMapInitializer.class);
 
     @Autowired
-    public TraineesMapInitializer(Map<UUID, Trainee> traineesMap) {
+    public TraineesMapInitializer(@Qualifier("traineesMap")Map<UUID, Trainee> traineesMap) {
         this.traineesMap = traineesMap;
     }
 
@@ -37,7 +40,7 @@ public class TraineesMapInitializer {
 
         if(file.exists()) {
             try{
-                LOGGER.info("Инициализация начинается");
+                LOGGER.info("Initializing Trainees Map");
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
                 List<Trainee> trainers = objectMapper.readValue(new File(path) , new TypeReference<>() {});
@@ -45,11 +48,11 @@ public class TraineesMapInitializer {
                 for (Trainee trainee : trainers) {
                     traineesMap.put(trainee.getUserId(), trainee);
                 }
-                LOGGER.info("Инициализация прошла успешно");
+                LOGGER.info("Initialized Trainees Map");
             }catch (IOException e){
-                LOGGER.error("Ошибка при чтении файла: {}", e.getMessage());
+                LOGGER.error("Error while reading file: {}", e.getMessage());
             }
-        }else LOGGER.error("Файл не найден");
+        }else LOGGER.error("File not found");
 
         return traineesMap;
     }

@@ -8,63 +8,49 @@ import com.example.demo.dto.TrainingCreateDTO;
 import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+
 @Service
+@Getter
 public class TrainingService {
 
-    private final TrainingDAO trainingDAO;
-    private final Logger logger = LoggerFactory.getLogger(TrainingService.class);
-
+    private final TrainingDAO genericDao;
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainingService.class);
 
     private TrainerDAO trainerDAO;
     private TraineeDAO traineeDAO;
 
-    @Autowired
-    public TrainingService(TrainingDAO trainingDAO) {
-        this.trainingDAO = trainingDAO;
-    }
-
-    public List<Training> findAll() {
-
-        List<Training> trainings = trainingDAO.select();
-
-        trainings.forEach(training -> {logger.info(training.toString());});
-
-        return trainings;
-    }
-
-    public Training findById(UUID id) {
-        Training trainer = trainingDAO.selectById(id);
-
-        if(trainer == null) {
-            logger.warn("Trainer with id {} not found", id);
-        }
-
-        else logger.info("Trainer with id {} found", id);
-
-        return trainer;
+    public TrainingService(TrainingDAO dao){
+        this.genericDao = dao;
     }
 
     public Training create(TrainingCreateDTO createDTO) {
-         Training newTraining = new Training();
+
+        if(createDTO == null){
+            throw new IllegalArgumentException();
+        }
+
+        Training newTraining = new Training();
 
 
-        Trainer trainer = trainerDAO.selectById(createDTO.getTrainerId());
-        Trainee trainee = traineeDAO.selectById(createDTO.getTraineeId());
+        Optional<Trainer> trainer = trainerDAO
+                                            .selectById(createDTO.getTrainerId());
 
-        if(trainer == null || trainee == null) {
+        Optional<Trainee> trainee = traineeDAO
+                                            .selectById(createDTO.getTrainerId());
+
+        if(trainer.isEmpty() || trainee.isEmpty()) {
             throw new IllegalArgumentException("Trainer or trainee does not exist");
         }
 
-
-
+        UUID id = UUID.randomUUID();  
         newTraining.setTraineeId(createDTO.getTraineeId());
         newTraining.setTrainerId(createDTO.getTrainerId());
         newTraining.setTrainingDate(createDTO.getTrainingDate());
@@ -73,10 +59,9 @@ public class TrainingService {
         newTraining.setTrainingType(createDTO.getTrainingType());
 
 
-        trainingDAO.create(newTraining);
+        genericDao.create(id , newTraining);
 
-        logger.info("Training with trainer id {} , trainee id {} , training date {} , training type {} successfully created" ,
-                newTraining.getTrainerId() , newTraining.getTraineeId() , newTraining.getTrainingDate(), newTraining.getTrainingType());
+        LOGGER.info("{} successfully created" , newTraining);
 
         return newTraining;
 

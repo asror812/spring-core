@@ -4,13 +4,14 @@ import com.example.demo.model.Trainer;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -28,7 +29,7 @@ public class TrainersMapInitializer {
     private final Map<UUID , Trainer>  trainersMap;
 
     @Autowired
-    public TrainersMapInitializer(Map<UUID , Trainer> trainersMap) {
+    public TrainersMapInitializer(@Qualifier("trainersMap") Map<UUID , Trainer> trainersMap) {
         this.trainersMap = trainersMap;
     }
 
@@ -38,7 +39,7 @@ public class TrainersMapInitializer {
 
         if(file.exists()) {
             try{
-                LOGGER.info("Инициализация начинается");
+                LOGGER.info("Initializing Trainers map");
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
                 List<Trainer> trainers = objectMapper.readValue(file, new TypeReference<>() {
@@ -47,11 +48,11 @@ public class TrainersMapInitializer {
                 for(Trainer trainer : trainers) {
                     trainersMap.put(trainer.getUserId() , trainer);
                 }
-                LOGGER.info("Инициализация прошла успешно");
+                LOGGER.info("Initialized Trainers map");
             }catch (IOException e){
-                LOGGER.error("Ошибка при чтении файла: {}", e.getMessage());
+                LOGGER.error("Error while reading a file: {}", e.getMessage());
             }
         }
-        else LOGGER.error("Файл не найден");
+        else LOGGER.error("File not found");
     }
 }

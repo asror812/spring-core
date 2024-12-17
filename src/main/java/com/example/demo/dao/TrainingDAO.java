@@ -1,15 +1,11 @@
 package com.example.demo.dao;
 
-import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
-
-import java.util.List;
 import java.util.UUID;
 
-public interface TrainingDAO {
+import org.springframework.stereotype.Repository;
 
-    void create(Training training);
-    List<Training> select();
-    Training selectById(UUID id);
-
+@Repository
+public interface TrainingDAO  extends GenericDAO<Training ,UUID>{
+  
 }

@@ -4,15 +4,13 @@ package com.example.demo.service;
 import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.model.Trainee;
-import com.example.demo.storage.PasswordGenerator;
+import com.example.demo.utils.PasswordGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -36,19 +34,40 @@ public class TraineeServiceTest {
     }
 
     @Test
+    public void createTraineeWithNull() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            traineeService.create(null);
+        });
+    }
+
+
+    @Test
     public void createTraineeTest() {
-       TraineeCreateDTO createDTO = new TraineeCreateDTO();
-
-        createDTO.setFirstName("Asror");
-        createDTO.setLastName("R");
-        createDTO.setDateOfBirth(LocalDate.of(2004 , 8 , 12));
-        createDTO.setAddress("Tashkent");
-
+       TraineeCreateDTO createDTO = new TraineeCreateDTO("Asror", "R", "Tashkent" , LocalDate.of(2004 , 8 , 12));
         traineeService.create(createDTO);
 
        Assertions.assertEquals(1 , traineesMap.size());
        Assertions.assertTrue(traineesMap.values().stream().anyMatch(f -> f.getUsername().equals("Asror.R")));
     }
+
+    @Test
+    public void updateTraineeWithNullId() {
+        TraineeUpdateDTO updateDTO = new TraineeUpdateDTO();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            traineeService.update(null, updateDTO);
+        });
+    }
+
+ 
+    @Test
+    public void updateTraineeWithNullDto() {
+        TraineeUpdateDTO updateDTO = new TraineeUpdateDTO();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        traineeService.update(null, updateDTO);
+    });
+}
+
+
 
     @Test
     public void updateTraineeTest() {

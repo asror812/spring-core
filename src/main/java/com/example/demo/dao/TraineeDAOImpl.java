@@ -1,48 +1,33 @@
 package com.example.demo.dao;
 
 import com.example.demo.model.Trainee;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 import java.util.*;
 
 
-@Component
-public class TraineeDAOImpl implements TraineeDAO {
+@Repository
+@Getter
+public class TraineeDAOImpl extends GenericDAOImpl<Trainee , UUID> implements TraineeDAO {
 
-     private final Map<UUID, Trainee> traineesMap;
+     private final Map<UUID, Trainee> storageMap;
 
      @Autowired
-     public TraineeDAOImpl(Map<UUID, Trainee> traineesMap) {
-         this.traineesMap  = traineesMap;
+     public TraineeDAOImpl(@Qualifier("traineesMap") Map<UUID, Trainee> storageMap) {
+         this.storageMap  = storageMap;
      }
-
-
-     @Override
-     public void create(Trainee trainee) {
-         traineesMap.putIfAbsent(trainee.getUserId(), trainee);
-     }
-
-    @Override
-    public List<Trainee> select() {
-        return new ArrayList<>(traineesMap.values());
-    }
-
-    @Override
-    public Trainee selectById(UUID id) {
-
-        return traineesMap.get(id) ;
-    }
 
     @Override
     public void update(Trainee trainee) {
-
-         traineesMap.remove(trainee.getUserId());
-         traineesMap.put(trainee.getUserId(), trainee);
+         storageMap.put(trainee.getUserId(), trainee);
     }
+
 
     @Override
     public void delete(UUID id) {
-          traineesMap.remove(id);
+        storageMap.remove(id);
     }
 
 }
