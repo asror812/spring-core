@@ -18,7 +18,7 @@ import java.util.UUID;
 public class TrainerService {
 
 
-    private static final Logger logger = LoggerFactory.getLogger(TrainerService.class);
+    private final Logger logger = LoggerFactory.getLogger(TrainerService.class);
     private final TrainerDAO trainerDAO;
 
     @Autowired

@@ -20,7 +20,7 @@ import java.util.UUID;
 public class TrainingService {
 
     private final TrainingDAO trainingDAO;
-    private static final Logger logger = LoggerFactory.getLogger(TrainingService.class);
+    private final Logger logger = LoggerFactory.getLogger(TrainingService.class);
 
 
     private TrainerDAO trainerDAO;

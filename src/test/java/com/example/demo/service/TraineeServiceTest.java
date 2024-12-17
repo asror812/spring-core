@@ -21,7 +21,7 @@ public class TraineeServiceTest {
 
     private  TraineeService traineeService;
 
-    private final Map<UUID , Trainee> traineesMap;
+    private Map<UUID , Trainee> traineesMap;
 
     @Autowired
     public TraineeServiceTest(Map<UUID , Trainee> traineesMap) {
