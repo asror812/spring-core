@@ -29,6 +29,10 @@ public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCrea
  
     public Trainer create(TrainerCreateDTO createDTO) {
 
+        if(createDTO == null){
+            throw new IllegalArgumentException();
+        }
+
         Trainer newTrainer = new Trainer();
         UUID id = UUID.randomUUID();
         String username = createDTO.getFirstName()+ "." + createDTO.getLastName();
@@ -57,8 +61,7 @@ public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCrea
 
         genericDao.create(id ,newTrainer);
 
-        LOGGER.info("{} successfully created" ,
-                username  ,  newTrainer.getSpecialization());
+        LOGGER.info("{} successfully created" , username  ,  newTrainer.getSpecialization());
 
 
         return newTrainer;
@@ -66,20 +69,25 @@ public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCrea
 
 
     public void update(UUID id , TrainerUpdateDTO updateDTO) {
-         Optional<Trainer> existingTrainer = genericDao.selectById(id);
 
-         if(existingTrainer.isEmpty()) {
+        if(id == null || updateDTO == null){
+            throw new IllegalArgumentException(); 
+        }
+
+        Optional<Trainer> existingTrainer = genericDao.selectById(id);
+
+        if(existingTrainer.isEmpty()) {
             LOGGER.error("Trainer with id {} not found", id);
             throw new IllegalArgumentException("Trainer with id " + id + " not found");
-         }
+        }
 
-            Trainer trainer = existingTrainer.get();
+        Trainer trainer = existingTrainer.get();
             
-            trainer.setFirstName(updateDTO.getFirstName());
-            trainer.setLastName(updateDTO.getLastName());
-            trainer.setPassword(updateDTO.getPassword());
-            trainer.setSpecialization(updateDTO.getSpecialization());
-            genericDao.update(trainer);
+        trainer.setFirstName(updateDTO.getFirstName());
+        trainer.setLastName(updateDTO.getLastName());
+        trainer.setPassword(updateDTO.getPassword());
+        trainer.setSpecialization(updateDTO.getSpecialization());
+        genericDao.update(trainer);
     }
 
 

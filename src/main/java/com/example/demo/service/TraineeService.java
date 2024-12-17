@@ -36,6 +36,11 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
 
     @Override
     public Trainee create(TraineeCreateDTO createDTO) {
+
+        if(createDTO == null){
+            throw new IllegalArgumentException();
+        }
+
         Trainee newTrainee = new Trainee();
 
         UUID id = UUID.randomUUID();
@@ -74,6 +79,12 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
 
    
     public void update(UUID id , TraineeUpdateDTO updateDTO) {
+
+
+        if(id == null || updateDTO == null){
+            throw new IllegalArgumentException();
+        }
+        
         Optional<Trainee> existingTrainee = genericDao.selectById(id);
 
         if(existingTrainee.isEmpty()){

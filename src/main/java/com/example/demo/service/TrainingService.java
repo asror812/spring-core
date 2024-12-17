@@ -32,7 +32,12 @@ public class TrainingService {
     }
 
     public Training create(TrainingCreateDTO createDTO) {
-         Training newTraining = new Training();
+
+        if(createDTO == null){
+            throw new IllegalArgumentException();
+        }
+
+        Training newTraining = new Training();
 
 
         Optional<Trainer> trainer = trainerDAO

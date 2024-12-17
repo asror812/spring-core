@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.dto.TrainerCreateDTO;
 import com.example.demo.dto.TrainerUpdateDTO;
 import com.example.demo.model.Trainer;
@@ -15,11 +16,7 @@ import java.util.UUID;
 @SpringBootTest
 public class TrainerServiceTest {
 
-
-
     private  TrainerService trainerService;
-
-
 
     private PasswordGenerator passwordGenerator;
 
@@ -43,6 +40,13 @@ public class TrainerServiceTest {
     }
 
 
+    @Test
+    public void createTrainerWithNull() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            trainerService.create(null);
+        });
+    }
+
 
     @Test
     public void createTrainerTest() {
@@ -51,9 +55,26 @@ public class TrainerServiceTest {
 
         Assertions.assertEquals(1 , trainersMap.size());
         Assertions.assertTrue(trainersMap.values().stream().anyMatch(f -> f.getUsername().equals("A.R")));
-
-
     }
+
+
+     @Test
+    public void updateTrainerWithNullId() {
+        TrainerUpdateDTO updateDTO = new TrainerUpdateDTO();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            trainerService.update(null, updateDTO);
+        });
+    }
+
+ 
+    @Test
+    public void updateTrainerWithNullDto() {
+        TrainerUpdateDTO updateDTO = new TrainerUpdateDTO();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+        trainerService.update(null, updateDTO);
+    });
+}
+
 
     @Test
     public void updateTrainerTest() {
@@ -67,8 +88,6 @@ public class TrainerServiceTest {
         TrainerUpdateDTO updateDTO = new TrainerUpdateDTO("Abror" , "Ruzimurodov" , "asdfg54321", "K" );
 
         trainerService.update(trainerId, updateDTO);
-
-
 
         Assertions.assertEquals(false, trainersMap.get(trainer.getUserId()).isActive());
         Assertions.assertEquals("Abror", trainersMap.get(trainer.getUserId()).getFirstName());
