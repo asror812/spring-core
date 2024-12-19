@@ -10,20 +10,19 @@ import java.util.*;
 
 @Repository
 @Getter
-public class TraineeDAOImpl extends GenericDAOImpl<Trainee , UUID> implements TraineeDAO {
+public class TraineeDAOImpl extends GenericDAOImpl<Trainee> implements TraineeDAO {
 
-     private final Map<UUID, Trainee> storageMap;
+    private final Map<UUID, Trainee> storageMap;
 
-     @Autowired
-     public TraineeDAOImpl(@Qualifier("traineesMap") Map<UUID, Trainee> storageMap) {
-         this.storageMap  = storageMap;
-     }
+    @Autowired
+    public TraineeDAOImpl(@Qualifier("traineesMap") Map<UUID, Trainee> storageMap) {
+       this.storageMap  = storageMap;
+    }
 
     @Override
     public void update(Trainee trainee) {
-         storageMap.put(trainee.getUserId(), trainee);
+        storageMap.put(trainee.getUserId(), trainee);
     }
-
 
     @Override
     public void delete(UUID id) {

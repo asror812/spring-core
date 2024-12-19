@@ -16,17 +16,13 @@ public class StorageConfig {
         return new HashMap<>();
     }
 
-
     @Bean
     public Map<UUID , Trainer> trainersMap() {
         return new HashMap<>();
     }
 
-
-
     @Bean
     public Map<UUID , Training> trainingsMap() {
         return new HashMap<>();
     }
-
 }

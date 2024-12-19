@@ -1,9 +1,8 @@
 package com.example.demo.service;
 
-
+import com.example.demo.dao.GenericDAO;
 import com.example.demo.dao.TraineeDAO;
 import com.example.demo.dao.TrainerDAO;
-import com.example.demo.dao.TrainingDAO;
 import com.example.demo.dto.TrainingCreateDTO;
 import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
@@ -19,35 +18,31 @@ import java.util.UUID;
 
 @Service
 @Getter
-public class TrainingService {
-
-    private final TrainingDAO genericDao;
+public class TrainingService extends GenericServiceImpl<Training, TrainingCreateDTO> {
+    private final GenericDAO<Training> genericDao;
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainingService.class);
-
     private TrainerDAO trainerDAO;
     private TraineeDAO traineeDAO;
 
-    public TrainingService(TrainingDAO dao){
+    public TrainingService(GenericDAO<Training> dao) {
         this.genericDao = dao;
     }
 
+    @Override
     public Training create(TrainingCreateDTO createDTO) {
-
-        if(createDTO == null){
-            throw new IllegalArgumentException();
+        if (createDTO == null) {
+           throw new IllegalArgumentException();
         }
 
         Training newTraining = new Training();
 
-
         Optional<Trainer> trainer = trainerDAO
                                             .selectById(createDTO.getTrainerId());
-
         Optional<Trainee> trainee = traineeDAO
                                             .selectById(createDTO.getTrainerId());
 
-        if(trainer.isEmpty() || trainee.isEmpty()) {
-            throw new IllegalArgumentException("Trainer or trainee does not exist");
+        if (trainer.isEmpty() || trainee.isEmpty()) {
+           throw new IllegalArgumentException("Trainer or trainee does not exist");
         }
 
         UUID id = UUID.randomUUID();  
@@ -58,13 +53,10 @@ public class TrainingService {
         newTraining.setTrainingName(createDTO.getTrainingName());
         newTraining.setTrainingType(createDTO.getTrainingType());
 
-
-        genericDao.create(id , newTraining);
-
+        genericDao.create(id, newTraining);
         LOGGER.info("{} successfully created" , newTraining);
 
         return newTraining;
-
     }
 
 
@@ -77,8 +69,4 @@ public class TrainingService {
     public void  setTraineeDAO(TraineeDAO traineeDAO) {
         this.traineeDAO = traineeDAO;
     }
-
-
-
-
 }

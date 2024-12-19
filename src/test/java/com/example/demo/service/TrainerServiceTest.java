@@ -1,10 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.dto.TrainerCreateDTO;
 import com.example.demo.dto.TrainerUpdateDTO;
 import com.example.demo.model.Trainer;
-import com.example.demo.utils.PasswordGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,12 +15,7 @@ import java.util.UUID;
 public class TrainerServiceTest {
 
     private  TrainerService trainerService;
-
-    private PasswordGenerator passwordGenerator;
-
-
     private final Map<UUID, Trainer> trainersMap;
-
 
     @Autowired
     public TrainerServiceTest(Map<UUID , Trainer> trainersMap) {
@@ -94,16 +87,8 @@ public class TrainerServiceTest {
         Assertions.assertEquals("Ruzimurodov", trainersMap.get(trainer.getUserId()).getLastName());
         Assertions.assertEquals("asdfg54321", trainersMap.get(trainer.getUserId()).getPassword());
         Assertions.assertEquals("K", trainersMap.get(trainer.getUserId()).getSpecialization());
-
-
         Assertions.assertEquals("A.A", trainersMap.get(trainer.getUserId()).getUsername());
      
-    }
-
-
-    @Autowired
-    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
-        this.passwordGenerator = passwordGenerator;
     }
 
 }

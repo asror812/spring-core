@@ -1,19 +1,17 @@
 package com.example.demo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.util.UUID;
 
-
-@NoArgsConstructor
 @Getter
 @Setter
-public class AbstractModel {
+@AllArgsConstructor
+@NoArgsConstructor
+public class BaseEntity {
+
     private UUID userId;
 
-    public AbstractModel(UUID userId) {
-        this.userId = userId;
-    }
 }

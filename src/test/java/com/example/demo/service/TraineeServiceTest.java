@@ -4,7 +4,6 @@ package com.example.demo.service;
 import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.model.Trainee;
-import com.example.demo.utils.PasswordGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,8 +24,6 @@ public class TraineeServiceTest {
     public TraineeServiceTest(Map<UUID , Trainee> traineesMap) {
         this.traineesMap = traineesMap;
     }
-
-    private PasswordGenerator passwordGenerator;
 
     @BeforeEach
     public void setUp() {
@@ -72,7 +69,8 @@ public class TraineeServiceTest {
     @Test
     public void updateTraineeTest() {
         UUID traineeId = UUID.randomUUID();
-        Trainee trainee = new Trainee(traineeId, "Asror", "R", "Asror.R" , passwordGenerator.generate(),
+        Trainee trainee = new Trainee(traineeId, "Asror", "R", "Asror.R" , 
+        "12345678qwertyu",
                 false ,  LocalDate.of(2004, 8, 12), "Tashkent");
 
         traineesMap.put(trainee.getUserId(), trainee);
@@ -85,18 +83,11 @@ public class TraineeServiceTest {
         updateDTO.setAddress("Tashkent");
         updateDTO.setPassword("zxcvb12345");
 
-
         traineeService.update(traineeId, updateDTO);
 
         Assertions.assertEquals("Asror.R", traineesMap.get(trainee.getUserId()).getUsername());
         Assertions.assertEquals("Ruzimurodov" , traineesMap.get(trainee.getUserId()).getLastName());
         Assertions.assertEquals("zxcvb12345", traineesMap.get(trainee.getUserId()).getPassword());
-    }
-
-
-    @Autowired
-    public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
-        this.passwordGenerator = passwordGenerator;
     }
 
     @Autowired

@@ -17,7 +17,6 @@ public class TrainingCreateDTO {
     private UUID trainerId;
     private String trainingName;
     private String trainingType;
-
     private LocalDate trainingDate;
     private Double trainingDuration;
 

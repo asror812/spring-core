@@ -10,18 +10,18 @@ import java.util.*;
 
 @Repository
 @Getter
-public class TrainerDAOImpl extends GenericDAOImpl<Trainer , UUID> implements TrainerDAO {
+public class TrainerDAOImpl extends GenericDAOImpl<Trainer> implements TrainerDAO {
 
-    private final Map<UUID , Trainer> storageMap ;
+    private final Map<UUID, Trainer> storageMap ;
 
     @Autowired
-    public TrainerDAOImpl(@Qualifier("trainersMap") Map<UUID , Trainer> storageMap) {
+    public TrainerDAOImpl(@Qualifier("trainersMap") Map<UUID, Trainer> storageMap) {
         this.storageMap = storageMap;
     }
 
     @Override
     public void update(Trainer trainer) {
-         storageMap.put(trainer.getUserId() , trainer);
+        storageMap.put(trainer.getUserId(), trainer);
     }
 
 }

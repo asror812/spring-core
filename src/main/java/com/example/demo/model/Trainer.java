@@ -12,11 +12,11 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class Trainer extends User{
+public class Trainer extends User {
 
     private String specialization;
 
-    public Trainer(UUID userId , String firstName, String lastName,String username,
+    public Trainer(UUID userId, String firstName, String lastName, String username,
     String password, boolean active, String specialization) {
         super(userId , firstName , lastName , username , password, active);
         this.specialization = specialization;

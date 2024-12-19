@@ -6,8 +6,6 @@ import com.example.demo.dto.TrainingCreateDTO;
 import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
-import com.example.demo.utils.PasswordGenerator;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,12 +69,9 @@ public class TrainingServiceTest {
 
         Assertions.assertEquals(1, trainingsMap.size());
         Assertions.assertTrue(trainingsMap.values().stream().anyMatch(b -> b.getTrainingName().equals("L")));
-
-
     }
 
     public void createTrainingTestWithNull() {
-     
         Assertions.assertThrows(IllegalArgumentException.class, () ->
             trainingService.create(null)); 
     }

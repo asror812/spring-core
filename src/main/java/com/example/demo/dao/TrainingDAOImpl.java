@@ -6,13 +6,12 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-
 import java.util.*;
 
 
 @Repository
 @Getter
-public class TrainingDAOImpl extends GenericDAOImpl<Training , UUID> implements TrainingDAO {
+public class TrainingDAOImpl extends GenericDAOImpl<Training>  {
 
     private final Map<UUID, Training> storageMap;
 

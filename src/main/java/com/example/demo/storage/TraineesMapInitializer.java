@@ -24,7 +24,6 @@ public class TraineesMapInitializer {
 
     @Value("${trainees.file.path}")
     private String path;
-
     private final Map<UUID, Trainee> traineesMap ;
     private final Logger LOGGER = LoggerFactory.getLogger(TraineesMapInitializer.class);
 
@@ -33,17 +32,16 @@ public class TraineesMapInitializer {
         this.traineesMap = traineesMap;
     }
 
-
     @PostConstruct
     public Map<UUID , Trainee> initialize()  {
         File file = new File(path);
 
-        if(file.exists()) {
-            try{
+        if (file.exists()) {
+           try{
                 LOGGER.info("Initializing Trainees Map");
                 ObjectMapper objectMapper = new ObjectMapper();
                 objectMapper.registerModule(new JavaTimeModule());
-                List<Trainee> trainers = objectMapper.readValue(new File(path) , new TypeReference<>() {});
+                List<Trainee> trainers = objectMapper.readValue(new File(path), new TypeReference<>() {});
 
                 for (Trainee trainee : trainers) {
                     traineesMap.put(trainee.getUserId(), trainee);
@@ -56,7 +54,4 @@ public class TraineesMapInitializer {
 
         return traineesMap;
     }
-
-
-
 }

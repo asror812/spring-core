@@ -1,6 +1,7 @@
 package com.example.demo.model;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,18 +11,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
 public class TrainingType {
-
     private String trainingTypeName;
-
-    public TrainingType(String trainingTypeName) {
-        this.trainingTypeName = trainingTypeName;
-    }
-
-    public String getTrainingType() {
-        return trainingTypeName;
-    }
-    public void setTrainingType(String trainingTypeName) {
-        this.trainingTypeName = trainingTypeName;
-    }
 }

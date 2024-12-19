@@ -7,7 +7,7 @@ import java.util.UUID;
 
 
 @Repository
-public interface TraineeDAO extends GenericDAO<Trainee , UUID>{
+public interface TraineeDAO extends GenericDAO<Trainee> {
     void update(Trainee trainee);
     void delete(UUID id);
 }

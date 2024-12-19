@@ -12,13 +12,13 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class Trainee  extends User{
+public class Trainee  extends User {
 
     private LocalDate dateOfBirth;
     private String address;
 
-    public Trainee(UUID userId, String firstName, String lastName , String username, String password ,boolean active, 
-    LocalDate dateOfBirth, String address) {
+    public Trainee(UUID userId, String firstName, String lastName, String username, 
+    String password, boolean active, LocalDate dateOfBirth, String address) {
         super(userId , firstName , lastName , username , password , active );
         this.dateOfBirth = dateOfBirth;
         this.address = address;

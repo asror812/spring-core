@@ -1,18 +1,16 @@
 package com.example.demo.model;
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
 import java.util.UUID;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @ToString
-public class User extends AbstractModel{
+@NoArgsConstructor
+public class User extends BaseEntity {
 
     private String firstName;
     private String lastName;
@@ -20,8 +18,7 @@ public class User extends AbstractModel{
     private String password;
     private boolean active;
 
-
-    public User(UUID userId ,String firstName, String lastName, String username, String password, boolean active) {
+    public User(UUID userId, String firstName, String lastName, String username, String password, boolean active) {
         super(userId);
         this.firstName = firstName;
         this.lastName = lastName;
@@ -29,5 +26,4 @@ public class User extends AbstractModel{
         this.password = password;
         this.active = active;
     }
-
 }

@@ -2,19 +2,16 @@ package com.example.demo;
 
 import java.time.LocalDate;
 import java.util.List;
-
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
-
 import com.example.demo.dto.TraineeCreateDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
-import com.example.demo.model.Training;
 import com.example.demo.service.TraineeService;
 import com.example.demo.service.TrainerService;
 
@@ -34,10 +31,6 @@ public class DemoApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
-
-
-        //ConfigurableApplicationContext context = SpringApplication.run(DemoApplication.class, args);
-
     }
 
 

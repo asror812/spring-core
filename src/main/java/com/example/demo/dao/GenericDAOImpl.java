@@ -4,21 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.UUID;
 import org.springframework.stereotype.Repository;
 
 
 @Repository
-public abstract class GenericDAOImpl<ENTITY , ID> implements GenericDAO<ENTITY , ID>{
+public abstract class GenericDAOImpl<ENTITY> implements GenericDAO<ENTITY> {
 
-    protected abstract Map<ID, ENTITY> getStorageMap();
+    protected abstract Map<UUID, ENTITY> getStorageMap();
 
-
-     @Override
-     public void create(ID id ,ENTITY entity) {
-         getStorageMap().put(id , entity);
-         
-     }
+    @Override
+    public void create(UUID id, ENTITY entity) {
+        getStorageMap().put(id, entity);         
+    }
 
     @Override
     public List<ENTITY> select() {
@@ -26,7 +24,7 @@ public abstract class GenericDAOImpl<ENTITY , ID> implements GenericDAO<ENTITY ,
     }
 
     @Override
-    public Optional<ENTITY> selectById(ID id) {
+    public Optional<ENTITY> selectById(UUID id) {
         return Optional.ofNullable(getStorageMap().get(id)) ;
     }
 

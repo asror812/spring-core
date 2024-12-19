@@ -9,8 +9,8 @@ public class TrainerCreateDTO extends BaseDTO {
   
     private String specialization;
 
-    public TrainerCreateDTO(String firstName , String lastName ,String specialization){
-         super(firstName , lastName);
-         this.specialization = specialization;
+    public TrainerCreateDTO(String firstName, String lastName, String specialization){
+        super(firstName, lastName);
+        this.specialization = specialization;
     }
 }

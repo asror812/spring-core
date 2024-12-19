@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @Getter
-public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCreateDTO>{
+public class TrainerService extends GenericServiceImpl<Trainer, TrainerCreateDTO> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
     private final TrainerDAO genericDao;
@@ -26,18 +26,15 @@ public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCrea
         this.genericDao = dao;
     }
 
- 
     public Trainer create(TrainerCreateDTO createDTO) {
-
-        if(createDTO == null){
-            throw new IllegalArgumentException();
+        if (createDTO == null) {
+           throw new IllegalArgumentException();
         }
 
         Trainer newTrainer = new Trainer();
         UUID id = UUID.randomUUID();
         String username = createDTO.getFirstName()+ "." + createDTO.getLastName();
 
-        
         newTrainer.setUserId(id);
         newTrainer.setFirstName(createDTO.getFirstName());
         newTrainer.setLastName(createDTO.getLastName());
@@ -51,46 +48,37 @@ public class TrainerService extends GenericService<Trainer ,  UUID , TrainerCrea
                  newTrainer.setUsername(username + id);
 
                  genericDao.create(id ,newTrainer);
-
                  LOGGER.info("{} successfully created."  , newTrainer);
 
                  return newTrainer;
              }
         }
 
-
         genericDao.create(id ,newTrainer);
-
         LOGGER.info("{} successfully created" , username  ,  newTrainer.getSpecialization());
-
 
         return newTrainer;
     }
 
 
-    public void update(UUID id , TrainerUpdateDTO updateDTO) {
-
+    public void update(UUID id, TrainerUpdateDTO updateDTO) {
         if(id == null || updateDTO == null){
-            throw new IllegalArgumentException(); 
+            throw new IllegalArgumentException("ID and update data cannot be null."); 
         }
 
         Optional<Trainer> existingTrainer = genericDao.selectById(id);
 
-        if(existingTrainer.isEmpty()) {
-            LOGGER.error("Trainer with id {} not found", id);
-            throw new IllegalArgumentException("Trainer with id " + id + " not found");
+        if (existingTrainer.isEmpty()) {
+           LOGGER.error("Trainer with id {} not found", id);
+           throw new IllegalArgumentException("Trainer with id " + id + " not found");
         }
 
         Trainer trainer = existingTrainer.get();
-            
+
         trainer.setFirstName(updateDTO.getFirstName());
         trainer.setLastName(updateDTO.getLastName());
         trainer.setPassword(updateDTO.getPassword());
         trainer.setSpecialization(updateDTO.getSpecialization());
         genericDao.update(trainer);
     }
-
-
-
-
 }

@@ -16,9 +16,7 @@ import java.util.UUID;
 
 @Service
 @Getter
-public class TraineeService extends GenericService<Trainee , UUID , TraineeCreateDTO> {
-
-
+public class TraineeService extends GenericServiceImpl<Trainee, TraineeCreateDTO> {
     private final TraineeDAO genericDao; 
     private static final  Logger LOGGER = LoggerFactory.getLogger(TraineeService.class);
     private PasswordGenerator passwordGenerator;
@@ -28,7 +26,6 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
         this.passwordGenerator = passwordGenerator;
     }
 
-
     @Autowired
     public TraineeService(TraineeDAO dao) {
         this.genericDao = dao;
@@ -36,9 +33,8 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
 
     @Override
     public Trainee create(TraineeCreateDTO createDTO) {
-
-        if(createDTO == null){
-            throw new IllegalArgumentException();
+        if (createDTO == null){
+           throw new IllegalArgumentException();
         }
 
         Trainee newTrainee = new Trainee();
@@ -69,43 +65,36 @@ public class TraineeService extends GenericService<Trainee , UUID , TraineeCreat
                 return newTrainee;
             }
         }
-        genericDao.create(id , newTrainee );
 
+        genericDao.create(id , newTrainee );
         LOGGER.info("{} successfully created",  newTrainee);
 
         return newTrainee;
     }
         
-
    
-    public void update(UUID id , TraineeUpdateDTO updateDTO) {
-
-
-        if(id == null || updateDTO == null){
-            throw new IllegalArgumentException();
+    public void update(UUID id, TraineeUpdateDTO updateDTO) {
+        if (id == null || updateDTO == null) {
+           throw new IllegalArgumentException("ID and update data cannot be null.");
         }
         
         Optional<Trainee> existingTrainee = genericDao.selectById(id);
 
-        if(existingTrainee.isEmpty()){
+        if (existingTrainee.isEmpty()) {
            LOGGER.error("Trainee with id {} not found", id);
            throw new IllegalArgumentException("Trainee with id " + id + " not found");
         }
             
-            Trainee trainee  = existingTrainee.get();
+        Trainee trainee  = existingTrainee.get();
+        trainee.setFirstName(updateDTO.getFirstName());
+        trainee.setLastName(updateDTO.getLastName());
+        trainee.setPassword(updateDTO.getPassword());
+        trainee.setAddress(updateDTO.getAddress());
+        trainee.setDateOfBirth(updateDTO.getDateOfBirth());
 
-            trainee.setFirstName(updateDTO.getFirstName());
-            trainee.setLastName(updateDTO.getLastName());
-            trainee.setPassword(updateDTO.getPassword());
-            trainee.setAddress(updateDTO.getAddress());
-            trainee.setDateOfBirth(updateDTO.getDateOfBirth());
-
-            genericDao.update(trainee);
-
-            LOGGER.info("{}  successfully updated " , trainee);
+        genericDao.update(trainee);
+        LOGGER.info("{}  successfully updated " , trainee);
     }
-
-
 
     public void delete(UUID id) {
         genericDao.delete(id);

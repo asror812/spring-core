@@ -23,13 +23,11 @@ public class TrainersMapInitializer {
 
     @Value("${trainers.file.path}")
     private String path;
-
     private final Logger LOGGER = LoggerFactory.getLogger(TrainersMapInitializer.class);
-
-    private final Map<UUID , Trainer>  trainersMap;
+    private final Map<UUID, Trainer>  trainersMap;
 
     @Autowired
-    public TrainersMapInitializer(@Qualifier("trainersMap") Map<UUID , Trainer> trainersMap) {
+    public TrainersMapInitializer(@Qualifier("trainersMap") Map<UUID, Trainer> trainersMap) {
         this.trainersMap = trainersMap;
     }
 
@@ -46,7 +44,7 @@ public class TrainersMapInitializer {
                 });
 
                 for(Trainer trainer : trainers) {
-                    trainersMap.put(trainer.getUserId() , trainer);
+                    trainersMap.put(trainer.getUserId(), trainer);
                 }
                 LOGGER.info("Initialized Trainers map");
             }catch (IOException e){

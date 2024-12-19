@@ -2,16 +2,16 @@ package com.example.demo.dao;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface GenericDAO<ENTITY , ID> {
+public interface GenericDAO<ENTITY> {
      
-    void create(ID id , ENTITY entity);
+    void create(UUID id, ENTITY entity);
     List<ENTITY> select();
-    
-    Optional<ENTITY> selectById(ID id);
+    Optional<ENTITY> selectById(UUID id);
     
 } 
