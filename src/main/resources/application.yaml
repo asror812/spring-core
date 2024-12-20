@@ -1,14 +1,11 @@
 trainings:
   file:
-     path: trainings.json
-
+     path: classpath:trainings.json
 trainees:
   file:
-    path:  trainees.json
-
-
+    path:  classpath:trainees.json
 trainers:
   file:
-    path:  trainers.json
+    path:  classpath:trainers.json
 
 

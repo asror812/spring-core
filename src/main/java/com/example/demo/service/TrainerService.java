@@ -17,9 +17,9 @@ import java.util.UUID;
 @Service
 @Getter
 public class TrainerService extends GenericServiceImpl<Trainer, TrainerCreateDTO> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
     private final TrainerDAO genericDao;
+    private static long serialNumber = 1;
 
     @Autowired
     public TrainerService(TrainerDAO dao) {
@@ -28,7 +28,7 @@ public class TrainerService extends GenericServiceImpl<Trainer, TrainerCreateDTO
 
     public Trainer create(TrainerCreateDTO createDTO) {
         if (createDTO == null) {
-           throw new IllegalArgumentException();
+           throw new NullPointerException("Trainer create data cannot be null.");
         }
 
         Trainer newTrainer = new Trainer();
@@ -45,8 +45,7 @@ public class TrainerService extends GenericServiceImpl<Trainer, TrainerCreateDTO
              if(Objects.equals(trainer1.getFirstName(), createDTO.getFirstName())
                  && Objects.equals(trainer1.getLastName(), createDTO.getLastName())) {
 
-                 newTrainer.setUsername(username + id);
-
+                 newTrainer.setUsername(username + serialNumber++);
                  genericDao.create(id ,newTrainer);
                  LOGGER.info("{} successfully created."  , newTrainer);
 
@@ -63,7 +62,7 @@ public class TrainerService extends GenericServiceImpl<Trainer, TrainerCreateDTO
 
     public void update(UUID id, TrainerUpdateDTO updateDTO) {
         if(id == null || updateDTO == null){
-            throw new IllegalArgumentException("ID and update data cannot be null."); 
+            throw new NullPointerException("ID and update data cannot be null."); 
         }
 
         Optional<Trainer> existingTrainer = genericDao.selectById(id);

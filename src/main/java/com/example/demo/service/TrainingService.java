@@ -31,7 +31,7 @@ public class TrainingService extends GenericServiceImpl<Training, TrainingCreate
     @Override
     public Training create(TrainingCreateDTO createDTO) {
         if (createDTO == null) {
-           throw new IllegalArgumentException();
+           throw new NullPointerException("Training create data cannot be null.");
         }
 
         Training newTraining = new Training();
@@ -39,7 +39,7 @@ public class TrainingService extends GenericServiceImpl<Training, TrainingCreate
         Optional<Trainer> trainer = trainerDAO
                                             .selectById(createDTO.getTrainerId());
         Optional<Trainee> trainee = traineeDAO
-                                            .selectById(createDTO.getTrainerId());
+                                            .selectById(createDTO.getTraineeId());
 
         if (trainer.isEmpty() || trainee.isEmpty()) {
            throw new IllegalArgumentException("Trainer or trainee does not exist");
@@ -58,7 +58,6 @@ public class TrainingService extends GenericServiceImpl<Training, TrainingCreate
 
         return newTraining;
     }
-
 
     @Autowired
     public void setTrainerDAO(TrainerDAO trainerDAO) {

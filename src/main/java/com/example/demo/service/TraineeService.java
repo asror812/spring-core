@@ -20,6 +20,7 @@ public class TraineeService extends GenericServiceImpl<Trainee, TraineeCreateDTO
     private final TraineeDAO genericDao; 
     private static final  Logger LOGGER = LoggerFactory.getLogger(TraineeService.class);
     private PasswordGenerator passwordGenerator;
+    private static long serialNumber = 1;
 
     @Autowired
     public void setPasswordGenerator(PasswordGenerator passwordGenerator) {
@@ -34,7 +35,7 @@ public class TraineeService extends GenericServiceImpl<Trainee, TraineeCreateDTO
     @Override
     public Trainee create(TraineeCreateDTO createDTO) {
         if (createDTO == null){
-           throw new IllegalArgumentException();
+           throw new NullPointerException("Trainee create data cannot be null.");
         }
 
         Trainee newTrainee = new Trainee();
@@ -57,9 +58,8 @@ public class TraineeService extends GenericServiceImpl<Trainee, TraineeCreateDTO
             if(Objects.equals(trainee1.getFirstName(), createDTO.getFirstName())
                 && Objects.equals(trainee1.getLastName(), createDTO.getLastName())){
 
-                newTrainee.setUsername(userName + newTrainee.getUserId());
+                newTrainee.setUsername(userName + serialNumber++);
                 genericDao.create(id, newTrainee);
-
                 LOGGER.info("{}  successfully created" , newTrainee);
 
                 return newTrainee;
@@ -75,7 +75,7 @@ public class TraineeService extends GenericServiceImpl<Trainee, TraineeCreateDTO
    
     public void update(UUID id, TraineeUpdateDTO updateDTO) {
         if (id == null || updateDTO == null) {
-           throw new IllegalArgumentException("ID and update data cannot be null.");
+           throw new NullPointerException("ID and update data cannot be null.");
         }
         
         Optional<Trainee> existingTrainee = genericDao.selectById(id);
