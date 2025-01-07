@@ -15,7 +15,10 @@ import java.util.*;
 @Repository
 public class TrainerDAOImpl implements TrainerDAO {
 
-    
+    private static final String HQL_FIND_TRAINER_BY_USER_ID = "FROM Trainer T WHERE T.user.id = :userId";
+    private static final String HQL_GET_ALL_TRAINERS = "from Trainer";
+
+
     @PersistenceContext
     private EntityManager entityManager;
     
@@ -63,8 +66,7 @@ public class TrainerDAOImpl implements TrainerDAO {
         }
 
         try {
-            String hql = "FROM Trainer T WHERE T.user.id = :userId";
-            TypedQuery<Trainer> query = entityManager.createQuery(hql, Trainer.class);
+            TypedQuery<Trainer> query = entityManager.createQuery(HQL_FIND_TRAINER_BY_USER_ID, Trainer.class);
             query.setParameter("userId", existingUser.get().getId());
 
             Trainer trainer = query.getSingleResult();
@@ -87,8 +89,8 @@ public class TrainerDAOImpl implements TrainerDAO {
     }
 
     public List<Trainer> getAll() {
-        String hql = "from Trainer ";
-        TypedQuery<Trainer> query = entityManager.createQuery(hql, Trainer.class);
+       
+        TypedQuery<Trainer> query = entityManager.createQuery(HQL_GET_ALL_TRAINERS, Trainer.class);
 
         List<Trainer> results = query.getResultList();
 

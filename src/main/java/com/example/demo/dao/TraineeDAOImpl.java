@@ -25,6 +25,11 @@ public class TraineeDAOImpl implements TraineeDAO {
 
     private final UserDAO userDAO;
 
+    private static final String FIND_TRAINEE_BY_USER_ID_QUERY = "FROM Trainee T WHERE T.user.id = :userId";
+
+
+    private static final String HQL_GET_ALL_TRAINEES = "from Trainee";
+
     // Inject EntityManagerFactoryUtil
     public TraineeDAOImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
@@ -48,8 +53,7 @@ public class TraineeDAOImpl implements TraineeDAO {
     }
 
     public List<Trainee> getAll() {
-        final String hql = "from Trainee ";
-        TypedQuery<Trainee> query = entityManager.createQuery(hql, Trainee.class);
+        TypedQuery<Trainee> query = entityManager.createQuery(HQL_GET_ALL_TRAINEES, Trainee.class);
 
         List<Trainee> results = query.getResultList();
 
@@ -79,8 +83,7 @@ public class TraineeDAOImpl implements TraineeDAO {
         }
 
         try {
-            String hql = "FROM Trainee T WHERE T.user.id = :userId";
-            TypedQuery<Trainee> query = entityManager.createQuery(hql, Trainee.class);
+            TypedQuery<Trainee> query = entityManager.createQuery(FIND_TRAINEE_BY_USER_ID_QUERY, Trainee.class);
             query.setParameter("userId", existingUser.get().getId());
 
             Trainee trainee = query.getSingleResult();
