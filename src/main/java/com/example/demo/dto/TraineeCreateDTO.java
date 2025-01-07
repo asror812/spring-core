@@ -4,17 +4,14 @@ import java.time.LocalDate;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
-@Getter
-@Setter
-public class TraineeCreateDTO extends BaseDTO{
-     
+@Getter@Setter
+@ToString(callSuper = true)
+public class TraineeCreateDTO extends UserCreateDTO {
+
     private LocalDate dateOfBirth;
+
     private String address;
 
-     public TraineeCreateDTO(String firstName , String lastName , String address , LocalDate dateOfBirth){
-         super(firstName, lastName);
-         this.address = address;
-         this.dateOfBirth = dateOfBirth;
-     }    
 }

@@ -1,33 +1,32 @@
 package com.example.demo.model;
 
-
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.UUID;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Entity
+@Getter@Setter
 @ToString
-public class User extends AbstractModel{
-
+@Table(name = "users")
+public class User extends BaseEntity { 
+   
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String lastName;
+
+    @Column(nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
-    private boolean active;
 
-
-    public User(UUID userId ,String firstName, String lastName, String username, String password, boolean active) {
-        super(userId);
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.username = username;
-        this.password = password;
-        this.active = active;
-    }
+    @Column(name = "is_active")
+    private boolean isActive;
 
 }
