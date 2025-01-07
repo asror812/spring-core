@@ -1,83 +1,240 @@
 package com.example.demo.service;
 
-
 import com.example.demo.dao.TrainerDAO;
+import com.example.demo.dao.TrainingTypeDAO;
+import com.example.demo.dao.UserDAO;
+import com.example.demo.dto.AuthDTO;
+import com.example.demo.dto.ChangePasswordDTO;
 import com.example.demo.dto.TrainerCreateDTO;
 import com.example.demo.dto.TrainerUpdateDTO;
 import com.example.demo.model.Trainer;
-import lombok.Getter;
+import com.example.demo.model.TrainingType;
+import com.example.demo.model.User;
+import com.example.demo.utils.PasswordGeneratorUtil;
+import com.example.demo.utils.ValidationUtil;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Objects;
+
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@Getter
-public class TrainerService extends GenericServiceImpl<Trainer, TrainerCreateDTO> {
+public class TrainerService {
+
+    private UsernameGeneratorService usernameGeneratorService;
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
-    private final TrainerDAO genericDao;
-    private static long serialNumber = 1;
+    private final TrainerDAO trainerDAO;
+
+    private AuthService authService;
+    private UserDAO userDAO;
+
+    private TrainingTypeDAO trainingTypeDAO;
 
     @Autowired
-    public TrainerService(TrainerDAO dao) {
-        this.genericDao = dao;
+    public void setUsernameGeneratorService(UsernameGeneratorService usernameGeneratorService) {
+        this.usernameGeneratorService = usernameGeneratorService;
     }
 
-    public Trainer create(TrainerCreateDTO createDTO) {
+    @Autowired
+    public void setTrainingTypeDAO(TrainingTypeDAO trainingTypeDAO) {
+        this.trainingTypeDAO = trainingTypeDAO;
+    }
+
+    @Autowired
+    public void setAuthService(AuthService authService) {
+        this.authService = authService;
+    }
+
+    public TrainerService(TrainerDAO trainerDAO) {
+        this.trainerDAO = trainerDAO;
+    }
+
+    @Autowired
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
+    @Transactional
+    public Optional<Trainer> create(TrainerCreateDTO createDTO) {
         if (createDTO == null) {
-           throw new NullPointerException("Trainer create data cannot be null.");
+            throw new NullPointerException("Trainer create data cannot be null.");
         }
 
-        Trainer newTrainer = new Trainer();
-        UUID id = UUID.randomUUID();
-        String username = createDTO.getFirstName()+ "." + createDTO.getLastName();
+        ValidationUtil.validate(createDTO);
 
-        newTrainer.setUserId(id);
-        newTrainer.setFirstName(createDTO.getFirstName());
-        newTrainer.setLastName(createDTO.getLastName());
-        newTrainer.setUsername(username);
-        newTrainer.setSpecialization(createDTO.getSpecialization());
+        String username = usernameGeneratorService.generateUsername(createDTO);
+        String password = PasswordGeneratorUtil.generate();
 
-        for (Trainer trainer1 : genericDao.select()) {
-             if(Objects.equals(trainer1.getFirstName(), createDTO.getFirstName())
-                 && Objects.equals(trainer1.getLastName(), createDTO.getLastName())) {
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setFirstName(createDTO.getFirstName());
+        user.setLastName(createDTO.getLastName());
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setActive(true);
 
-                 newTrainer.setUsername(username + serialNumber++);
-                 genericDao.create(id ,newTrainer);
-                 LOGGER.info("{} successfully created."  , newTrainer);
+        UUID trainingTypeId = createDTO.getTrainingTypeId();
+        Optional<TrainingType> optionalTrainingType = trainingTypeDAO
+                .findById(trainingTypeId);
 
-                 return newTrainer;
-             }
+        if (optionalTrainingType.isEmpty()) {
+            LOGGER.error("No Training Type found with id {}  ", trainingTypeId);
+            throw new EntityNotFoundException(
+                    "No Training type found with id {} " + trainingTypeId);
         }
 
-        genericDao.create(id ,newTrainer);
-        LOGGER.info("{} successfully created" , username  ,  newTrainer.getSpecialization());
+        Trainer trainer = new Trainer();
+        trainer.setId(UUID.randomUUID());
+        trainer.setSpecialization(optionalTrainingType.get());
+        trainer.setUser(user);
 
-        return newTrainer;
+        Optional<Trainer> optional = trainerDAO.create(trainer);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("Failed to create  {} ", createDTO);
+            return Optional.empty();
+        }
+
+        LOGGER.info("'{}' successfully created", optional.get());
+
+        return optional;
     }
 
+    public List<Trainer> getAll() {
+        return trainerDAO.getAll();
+    }
 
-    public void update(UUID id, TrainerUpdateDTO updateDTO) {
-        if(id == null || updateDTO == null){
-            throw new NullPointerException("ID and update data cannot be null."); 
-        }
+    public Optional<Trainer> findById(AuthDTO authDTO, UUID id) {
 
-        Optional<Trainer> existingTrainer = genericDao.selectById(id);
+        Optional<Trainer> existingTrainer = trainerDAO.findById(id);
 
         if (existingTrainer.isEmpty()) {
-           LOGGER.error("Trainer with id {} not found", id);
-           throw new IllegalArgumentException("Trainer with id " + id + " not found");
+            LOGGER.error("No Trainer found with id {} ", id);
+            return Optional.empty();
         }
 
-        Trainer trainer = existingTrainer.get();
+        return existingTrainer;
+    }
 
-        trainer.setFirstName(updateDTO.getFirstName());
-        trainer.setLastName(updateDTO.getLastName());
-        trainer.setPassword(updateDTO.getPassword());
-        trainer.setSpecialization(updateDTO.getSpecialization());
-        genericDao.update(trainer);
+    public Optional<Trainer> findByUsername(AuthDTO authDTO, String username) {
+
+        authService.authenticate(authDTO);
+
+        Optional<Trainer> optional = trainerDAO.findByUsername(username);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with username {}", username);
+            return Optional.empty();
+        }
+
+        return optional;
+
+    }
+
+    @Transactional
+    public void update(AuthDTO authDTO, TrainerUpdateDTO updateDTO) {
+        authService.authenticate(authDTO);
+
+        if (updateDTO == null) {
+            throw new NullPointerException("Update data cannot be null.");
+        }
+
+        ValidationUtil.validate(updateDTO);
+
+        UUID id = updateDTO.getId();
+
+        Optional<Trainer> optional = findById(authDTO, id);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with id {}", id);
+            throw new EntityNotFoundException("No Trainer found with id " + id);
+        }
+
+        UUID trainingTypeId = updateDTO.getTrainingTypeId();
+        Optional<TrainingType> optionalTrainingType = trainingTypeDAO
+                .findById(trainingTypeId);
+
+        if (optionalTrainingType.isEmpty()) {
+            LOGGER.error("No Training Type found with id {}  ", trainingTypeId);
+            throw new EntityNotFoundException(
+                    "No Training type found with id {} " + trainingTypeId);
+        }
+
+        Trainer trainer = optional.get();
+
+        User user = trainer.getUser();
+        user.setFirstName(updateDTO.getFirstName());
+        user.setLastName(updateDTO.getLastName());
+
+        trainer.setSpecialization(optionalTrainingType.get());
+
+        trainerDAO.update(trainer);
+    }
+
+    @Transactional
+    public void activate(AuthDTO authDTO, UUID id) {
+        authService.authenticate(authDTO);
+
+        Optional<Trainer> optional = trainerDAO.findById(id);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with id {}", id);
+            throw new EntityNotFoundException("No Trainer found with id " + id);
+        }
+
+        User user = optional.get().getUser();
+        if (user.isActive()) {
+            LOGGER.error("'{}' already active", optional.get());
+            return;
+        }
+
+        user.setActive(true);
+        userDAO.update(user);
+    }
+
+    @Transactional
+    public void deactivate(AuthDTO authDTO, UUID id) {
+        authService.authenticate(authDTO);
+
+        Optional<Trainer> optional = trainerDAO.findById(id);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with id {}", id);
+            throw new EntityNotFoundException("No Trainer found with id " + id);
+        }
+
+        User user = optional.get().getUser();
+        if (!user.isActive()) {
+            LOGGER.error("'{}' already inactive", optional.get());
+            return;
+        }
+
+        user.setActive(false);
+        userDAO.update(user);
+
+    }
+
+    @Transactional
+    public void changePassword(AuthDTO authDTO, ChangePasswordDTO changePasswordDTO) {
+        UUID id = changePasswordDTO.getId();
+
+        Optional<Trainer> optional = trainerDAO.findById(id);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with id {}", id);
+            throw new EntityNotFoundException("No Trainer found with id " + id);
+        }
+
+        User user = optional.get().getUser();
+
+        user.setPassword(changePasswordDTO.getNewPassword());
+
+        userDAO.update(user);
     }
 }

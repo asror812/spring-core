@@ -1,17 +1,36 @@
 package com.example.demo.model;
 
-
-import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
-@NoArgsConstructor
-@Getter
-@Setter
-@ToString
-@AllArgsConstructor
-public class TrainingType {
+
+@Getter@Setter
+@Entity
+@Table(name = "training_types")
+public class TrainingType extends BaseEntity  {
+
+    @Column(name = "training_type_name", nullable = false)
     private String trainingTypeName;
+
+    @OneToMany(mappedBy = "specialization")
+    public List<Trainer> trainers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "trainingType", cascade = { CascadeType.PERSIST,
+            CascadeType.MERGE }, orphanRemoval = true)
+    public List<Training> trainings = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "TrainingType [trainingTypeName=" + trainingTypeName +"]";
+    }
+
+
+    
 }

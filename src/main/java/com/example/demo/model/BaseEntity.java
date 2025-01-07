@@ -1,17 +1,21 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.io.Serializable;
 import java.util.UUID;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class BaseEntity {
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 
-    private UUID userId;
+@Getter@Setter
+@NoArgsConstructor
+@MappedSuperclass
+public class BaseEntity implements Serializable {
+
+    @Id
+    private UUID id;
 
 }
