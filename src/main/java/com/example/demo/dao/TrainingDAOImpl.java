@@ -26,6 +26,7 @@ public class TrainingDAOImpl implements TrainingDAO {
 
     @PersistenceContext
     private EntityManager entityManager;
+    private static final String HQL_GET_ALL_TRAININGS = "from Training";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
 
@@ -130,8 +131,8 @@ public class TrainingDAOImpl implements TrainingDAO {
 
     @Override
     public List<Training> getAll() {
-        String hql = "from Training ";
-        TypedQuery<Training> query = entityManager.createQuery(hql, Training.class);
+        
+        TypedQuery<Training> query = entityManager.createQuery(HQL_GET_ALL_TRAININGS, Training.class);
 
         List<Training> results = query.getResultList();
 

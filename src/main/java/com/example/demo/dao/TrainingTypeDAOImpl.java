@@ -14,10 +14,13 @@ public class TrainingTypeDAOImpl implements TrainingTypeDAO {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private static final String HQL_FIND_TRAINING_TYPE_BY_NAME = "FROM TrainingType tt WHERE tt.trainingTypeName = :type";
+    private static final String HQL_GET_ALL_TRAINING_TYPES = "from TrainingType";
+
 
     public List<TrainingType> getAll() {
-        final String hql = "from TrainingType ";
-        TypedQuery<TrainingType> query = entityManager.createQuery(hql, TrainingType.class);
+        
+        TypedQuery<TrainingType> query = entityManager.createQuery(HQL_GET_ALL_TRAINING_TYPES, TrainingType.class);
 
         List<TrainingType> results = query.getResultList();
 
@@ -28,8 +31,7 @@ public class TrainingTypeDAOImpl implements TrainingTypeDAO {
     public Optional<TrainingType> findByName(String name) {
         try {
 
-            String hql = "FROM TrainingType tt WHERE tt.trainingTypeName = :type";
-            TypedQuery<TrainingType> tQuery = entityManager.createQuery(hql, TrainingType.class);
+            TypedQuery<TrainingType> tQuery = entityManager.createQuery(HQL_FIND_TRAINING_TYPE_BY_NAME, TrainingType.class);
             tQuery.setParameter("type", name);
 
             TrainingType trainingType = tQuery.getSingleResult();
