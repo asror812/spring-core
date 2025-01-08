@@ -180,11 +180,7 @@ public class TrainingService {
                 .stream()
                 .map(tr -> tr.getTrainer().getId())
                 .collect(Collectors.toSet());
-
-        for (Trainer t : all) {
-            LOGGER.info("ALL {}", t.getId());
-        }
-
+                
         all.removeIf(trainer -> traineeTrainingIds.contains(trainer.getId()));
 
         return all;
