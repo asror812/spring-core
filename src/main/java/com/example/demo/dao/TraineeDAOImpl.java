@@ -44,7 +44,6 @@ public class TraineeDAOImpl implements TraineeDAO {
 
             entityManager.persist(user);
 
-             trainee.setTrainers(null);
             entityManager.persist(trainee);
             return Optional.of(trainee);
         } catch (Exception e) {
@@ -63,14 +62,11 @@ public class TraineeDAOImpl implements TraineeDAO {
     @Override
     public Optional<Trainee> findById(UUID id) {
         Trainee trainee = entityManager.find(Trainee.class, id);
-
-
         
         if (trainee == null) {
             return Optional.empty();
         }
         
-        trainee.setTrainers(trainee.getTrainers());
         return Optional.of(trainee);
     }
 

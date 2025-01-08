@@ -15,6 +15,7 @@ import com.example.demo.dao.TrainerDAO;
 import com.example.demo.dto.AuthDTO;
 import com.example.demo.dto.ChangePasswordDTO;
 import com.example.demo.dto.TraineeCreateDTO;
+import com.example.demo.dto.TraineeCriteriaDTO;
 import com.example.demo.dto.TraineeUpdateDTO;
 import com.example.demo.dto.TrainerCreateDTO;
 import com.example.demo.dto.TrainingCreateDTO;
@@ -237,6 +238,59 @@ public class DemoApplication implements CommandLineRunner {
 
                 for (Trainer notAssignedTrainee : notAssignedTrainers2) {
                     LOGGER.info("{} ", notAssignedTrainee);
+                }
+
+                // Get trainee Trainings
+                TraineeCriteriaDTO traineeCriteriaDTO = new TraineeCriteriaDTO();
+                traineeCriteriaDTO.setUsername("A.B");
+
+                List<Training> traineeTrainings0 = trainingService.getTraineeTrainings(authDTO, traineeCriteriaDTO);
+
+                LOGGER.info("TRAINEE TRAININGS - 0");
+                for (Training t : traineeTrainings0) {
+                    LOGGER.info("{} ", t);
+                }
+
+                LOGGER.info("TRAINEE TRAININGS - 1");
+                traineeCriteriaDTO.setFrom(LocalDate.now().plusDays(2));
+                List<Training> traineeTrainings1 = trainingService.getTraineeTrainings(authDTO, traineeCriteriaDTO);
+                for (Training t : traineeTrainings1) {
+                    LOGGER.info("{} ", t);
+                }
+
+                LOGGER.info("TRAINEE TRAININGS - 2");
+                traineeCriteriaDTO.setFrom(LocalDate.now().minusDays(2));
+                List<Training> traineeTrainings2 = trainingService.getTraineeTrainings(authDTO, traineeCriteriaDTO);
+                for (Training t : traineeTrainings2) {
+                    LOGGER.info("{} ", t);
+                }
+
+                LOGGER.info("TRAINEE TRAININGS - 3");
+                traineeCriteriaDTO.setTrainerName("C.C");
+                List<Training> traineeTrainings3 = trainingService.getTraineeTrainings(authDTO, traineeCriteriaDTO);
+                for (Training t : traineeTrainings3) {
+                    LOGGER.info("{} ", t);
+                }
+
+                LOGGER.info("TRAINEE TRAININGS - 4");
+                traineeCriteriaDTO.setTrainerName("B.B");
+                List<Training> traineeTrainings4 = trainingService.getTraineeTrainings(authDTO, traineeCriteriaDTO);
+                for (Training t : traineeTrainings4) {
+                    LOGGER.info("{} ", t);
+                }
+
+                LOGGER.info("TRAINEE TRAININGS - 5");
+                traineeCriteriaDTO.setTrainingType("Cycling");
+                List<Training> traineeTrainings5 = trainingService.getTraineeTrainings(authDTO, traineeCriteriaDTO);
+                for (Training t : traineeTrainings5) {
+                    LOGGER.info("{} ", t);
+                }
+
+                LOGGER.info("TRAINEE TRAININGS - 6");
+                traineeCriteriaDTO.setTrainerName("Swimming");
+                List<Training> traineeTrainings6 = trainingService.getTraineeTrainings(authDTO, traineeCriteriaDTO);
+                for (Training t : traineeTrainings6) {
+                    LOGGER.info("{} ", t);
                 }
             }
 

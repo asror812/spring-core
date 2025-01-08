@@ -24,7 +24,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class TrainingService {
@@ -96,12 +100,6 @@ public class TrainingService {
         }
 
         TrainingType trainingType = optionalTrainingType.get();
-
-        trainee.getTrainers().add(trainer);
-        trainer.getTrainees().add(trainee);
-
-        trainerDAO.update(trainer);
-        traineeDAO.update(trainee);
 
         Training training = new Training();
         training.setId(UUID.randomUUID());
@@ -175,14 +173,17 @@ public class TrainingService {
                     "No Trainee found with username " + traineeUsername);
         }
 
-        Trainee trainee = optional.get();
+        List<Training> traineeTrainings = trainingDAO.findTraineeTrainingsById(optional.get().getId());
         List<Trainer> all = trainerDAO.getAll();
 
-        LOGGER.info("ALL {}", all);
-        LOGGER.info("OWN {}", trainee.getTrainers());
-
-        all.removeAll(trainee.getTrainers());
+        Set<UUID> traineeTrainingIds = traineeTrainings
+                .stream()
+                .map(tr -> tr.getTrainer().getId())
+                .collect(Collectors.toSet());
+                
+        all.removeIf(trainer -> traineeTrainingIds.contains(trainer.getId()));
 
         return all;
     }
+
 }
