@@ -9,8 +9,6 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -29,12 +27,6 @@ public class Trainer extends BaseEntity  {
     @ManyToOne
     @JoinColumn(name = "specialization")
     private TrainingType specialization;
-
-    @ManyToMany
-    @JoinTable(name = "trainer_trainees", 
-            joinColumns = @JoinColumn(name = "trainer_id"), 
-                    inverseJoinColumns = @JoinColumn(name = "trainee_id"))
-    private List<Trainee> trainees = new ArrayList<>();
 
     @OneToMany(mappedBy = "trainer", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
     private List<Training> trainings = new ArrayList<>();

@@ -28,6 +28,10 @@ public class TrainingDAOImpl implements TrainingDAO {
     private EntityManager entityManager;
     private static final String HQL_GET_ALL_TRAININGS = "from Training";
 
+    private static final String FIND_TRAINING_BY_TRAINEE_ID = "FROM Training T WHERE T.trainee.id = :id";
+
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
 
     public Optional<Training> create(Training training) {
@@ -37,6 +41,15 @@ public class TrainingDAOImpl implements TrainingDAO {
         } catch (Exception e) {
             return Optional.empty();
         }
+    }
+
+    public List<Training> findTraineeTrainingsById(UUID id) {
+        TypedQuery<Training> query = entityManager.createQuery(FIND_TRAINING_BY_TRAINEE_ID, Training.class);
+        query.setParameter("id", id);
+
+        List<Training> resultList = query.getResultList();
+
+        return resultList;
     }
 
     @Override
