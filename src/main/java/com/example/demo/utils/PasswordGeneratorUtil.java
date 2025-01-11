@@ -15,6 +15,8 @@ public class PasswordGeneratorUtil {
     private static final SecureRandom RANDOM = new SecureRandom();
 
 
+    private PasswordGeneratorUtil() {}
+    
     public static String generate() {
 
         StringBuilder password = new StringBuilder();

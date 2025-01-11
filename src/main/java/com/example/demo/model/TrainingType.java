@@ -20,11 +20,11 @@ public class TrainingType extends BaseEntity  {
     private String trainingTypeName;
 
     @OneToMany(mappedBy = "specialization")
-    public List<Trainer> trainers = new ArrayList<>();
+    private List<Trainer> trainers = new ArrayList<>();
 
     @OneToMany(mappedBy = "trainingType", cascade = { CascadeType.PERSIST,
             CascadeType.MERGE }, orphanRemoval = true)
-    public List<Training> trainings = new ArrayList<>();
+    private List<Training> trainings = new ArrayList<>();
 
     @Override
     public String toString() {

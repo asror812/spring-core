@@ -1,13 +1,11 @@
 package com.example.demo.dao;
 
+import com.example.demo.exceptions.DataAccessException;
 import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
 import com.example.demo.model.TrainingType;
 import com.example.demo.model.User;
-import com.example.demo.service.AuthService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -17,39 +15,25 @@ import jakarta.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-
 import java.time.LocalDate;
 import java.util.*;
 
 @Repository
-public class TrainingDAOImpl implements TrainingDAO {
-
-    @PersistenceContext
-    private EntityManager entityManager;
-    private static final String HQL_GET_ALL_TRAININGS = "from Training";
+public class TrainingDAOImpl extends AbstractHibernateDAO<Training> implements TrainingDAO {
 
     private static final String FIND_TRAINING_BY_TRAINEE_ID = "FROM Training T WHERE T.trainee.id = :id";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainingDAOImpl.class);
 
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
-
-    public Optional<Training> create(Training training) {
-        try {
-            entityManager.persist(training);
-            return Optional.of(training);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
+    public TrainingDAOImpl() {
+        super(Training.class);
     }
 
     public List<Training> findTraineeTrainingsById(UUID id) {
         TypedQuery<Training> query = entityManager.createQuery(FIND_TRAINING_BY_TRAINEE_ID, Training.class);
         query.setParameter("id", id);
 
-        List<Training> resultList = query.getResultList();
-
-        return resultList;
+        return query.getResultList();
     }
 
     @Override
@@ -96,8 +80,7 @@ public class TrainingDAOImpl implements TrainingDAO {
             return entityManager.createQuery(query).getResultList();
         } catch (Exception e) {
             LOGGER.error("Failed to get Trainee Trainings : {}", username);
-
-            return Collections.emptyList();
+            throw new DataAccessException("Failed to get trainee trainings ");
         }
     }
 
@@ -136,19 +119,9 @@ public class TrainingDAOImpl implements TrainingDAO {
 
             return entityManager.createQuery(query).getResultList();
         } catch (Exception e) {
-
-            e.printStackTrace();
+            LOGGER.error("Failed to get trainer trainings", e);
             return Collections.emptyList();
         }
     }
 
-    @Override
-    public List<Training> getAll() {
-        
-        TypedQuery<Training> query = entityManager.createQuery(HQL_GET_ALL_TRAININGS, Training.class);
-
-        List<Training> results = query.getResultList();
-
-        return results;
-    }
 }

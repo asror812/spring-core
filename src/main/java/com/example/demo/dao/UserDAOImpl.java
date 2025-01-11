@@ -2,29 +2,19 @@ package com.example.demo.dao;
 
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import com.example.demo.model.User;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
 
 @Repository
-public class UserDAOImpl implements UserDAO {
+public class UserDAOImpl extends AbstractHibernateDAO<User> implements UserDAO {
 
     private static final String HQL_FIND_USER_BY_USERNAME = "FROM User U WHERE U.username = :username";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserDAOImpl.class);
-    
-   
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    public UserDAOImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    public UserDAOImpl() {
+        super(User.class);
     }
 
     @Override
@@ -43,22 +33,4 @@ public class UserDAOImpl implements UserDAO {
     }
 
 
-    public void update(User user) {
-        try {
-            entityManager.merge(user);
-        } catch (Exception e) {
-            LOGGER.error("Failed to update trainee", e);
-        }
-    }
-
-    public Optional<User> create(User user) {
-        try{
-            entityManager.persist(user);
-
-            return Optional.of(user);
-        } catch (Exception e) {
-            LOGGER.error("Failed to create trainee", e);
-            return Optional.empty();
-        }
-    }
 }

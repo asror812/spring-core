@@ -1,11 +1,10 @@
 package com.example.demo.dao;
 
+import com.example.demo.exceptions.DataAccessException;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.User;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.NoResultException;
-import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,48 +12,16 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 
 @Repository
-public class TrainerDAOImpl implements TrainerDAO {
+public class TrainerDAOImpl extends AbstractHibernateDAO<Trainer> implements TrainerDAO {
 
     private static final String HQL_FIND_TRAINER_BY_USER_ID = "FROM Trainer T WHERE T.user.id = :userId";
-    private static final String HQL_GET_ALL_TRAINERS = "from Trainer";
-
-
-    @PersistenceContext
-    private EntityManager entityManager;
-    
+    private static final String HQL_GET_ALL = "FROM Trainer";
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainerDAOImpl.class);
     private final UserDAO userDAO;
 
     public TrainerDAOImpl(UserDAO userDAO) {
+        super(Trainer.class);
         this.userDAO = userDAO;
-    }
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainerDAOImpl.class);
-
-    @Override
-    public Optional<Trainer> create(Trainer trainer) {
-        try {
-
-            User user = trainer.getUser();
-            entityManager.persist(user);
-
-
-            entityManager.persist(trainer);
-
-            return Optional.of(trainer);
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    @Override
-    public Optional<Trainer> findById(UUID id) {
-        Trainer trainer = entityManager.find(Trainer.class, id);
-
-        if (trainer == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(trainer);
     }
 
     @Override
@@ -74,27 +41,20 @@ public class TrainerDAOImpl implements TrainerDAO {
             return Optional.of(trainer);
 
         } catch (NoResultException e) {
-            LOGGER.error("No Trainer found with username {}", username);
+            LOGGER.warn("No Trainer found with username {}", username);
             return Optional.empty();
         }
     }
 
     @Override
-    public void update(Trainer trainer) {
-        try {
-            entityManager.merge(trainer);
-        } catch (Exception e) {
-            LOGGER.error("Failed to update trainer", e);
-        }
-    }
-
     public List<Trainer> getAll() {
-       
-        TypedQuery<Trainer> query = entityManager.createQuery(HQL_GET_ALL_TRAINERS, Trainer.class);
-
-        List<Trainer> results = query.getResultList();
-
-        return results;
+        try {
+            TypedQuery<Trainer> query = entityManager.createQuery(HQL_GET_ALL, Trainer.class);
+            return query.getResultList();
+        } catch (NoResultException e) {
+            LOGGER.error("Failed to get trainers");
+            throw new DataAccessException("Failed to get trainers");
+        }
     }
 
 }
