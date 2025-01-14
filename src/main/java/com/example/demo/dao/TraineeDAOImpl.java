@@ -54,9 +54,7 @@ public class TraineeDAOImpl implements TraineeDAO {
     public List<Trainee> getAll() {
         TypedQuery<Trainee> query = entityManager.createQuery(HQL_GET_ALL_TRAINEES, Trainee.class);
 
-        List<Trainee> results = query.getResultList();
-
-        return results;
+        return query.getResultList();
     }
 
     @Override

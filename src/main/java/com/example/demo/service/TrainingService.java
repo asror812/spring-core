@@ -26,9 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class TrainingService {
@@ -152,10 +150,8 @@ public class TrainingService {
 
         ValidationUtil.validate(criteriaDTO);
 
-        List<Training> trainerTrainings = trainingDAO.findTrainerTrainings(criteriaDTO.getUsername(),
+        return trainingDAO.findTrainerTrainings(criteriaDTO.getUsername(),
                 criteriaDTO.getFrom(), criteriaDTO.getTo(), criteriaDTO.getTraineeName());
-
-        return trainerTrainings;
     }
 
     public List<Trainer> getNotAssignedTrainers(AuthDTO authDTO, String traineeUsername) {

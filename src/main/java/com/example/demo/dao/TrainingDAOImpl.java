@@ -5,7 +5,6 @@ import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
 import com.example.demo.model.TrainingType;
 import com.example.demo.model.User;
-import com.example.demo.service.AuthService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -32,7 +31,7 @@ public class TrainingDAOImpl implements TrainingDAO {
 
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrainingDAOImpl.class);
 
     public Optional<Training> create(Training training) {
         try {
@@ -47,9 +46,8 @@ public class TrainingDAOImpl implements TrainingDAO {
         TypedQuery<Training> query = entityManager.createQuery(FIND_TRAINING_BY_TRAINEE_ID, Training.class);
         query.setParameter("id", id);
 
-        List<Training> resultList = query.getResultList();
+        return query.getResultList();
 
-        return resultList;
     }
 
     @Override
@@ -147,8 +145,6 @@ public class TrainingDAOImpl implements TrainingDAO {
         
         TypedQuery<Training> query = entityManager.createQuery(HQL_GET_ALL_TRAININGS, Training.class);
 
-        List<Training> results = query.getResultList();
-
-        return results;
+        return query.getResultList();
     }
 }
