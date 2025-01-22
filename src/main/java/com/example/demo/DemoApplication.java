@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,33 +25,37 @@ import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
 import com.example.demo.model.TrainingType;
 import com.example.demo.model.User;
-import com.example.demo.service.TraineeService;
-import com.example.demo.service.TrainerService;
+import com.example.demo.service.TraineeServiceImpl;
+import com.example.demo.service.TrainerServiceImpl;
 import com.example.demo.service.TrainingService;
-import com.example.demo.service.TrainingTypeService;
+import com.example.demo.service.TrainingTypeServiceImpl;
 
 @SpringBootApplication
 public class DemoApplication implements CommandLineRunner {
-
-    @Autowired
     private TrainingService trainingService;
 
-    @Autowired
-    public TraineeService traineeService;
-
-    @Autowired
-    public TrainerService trainerService;
-
-    @Autowired
     private TraineeDAO traineeDAO;
 
-    @Autowired
     private TrainerDAO trainerDAO;
 
-    @Autowired
-    private TrainingTypeService trainingTypeService;
+    private TrainingTypeServiceImpl trainingTypeService;
 
-    private final static org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DemoApplication.class);
+    private TraineeServiceImpl traineeService;
+
+    private TrainerServiceImpl trainerService;
+
+    public DemoApplication(TrainingService trainingService, TraineeServiceImpl traineeService,
+            TrainerServiceImpl trainerService, TrainerDAO trainerDAO, TraineeDAO traineeDAO,
+            TrainingTypeServiceImpl trainingTypeService) {
+        this.traineeDAO = traineeDAO;
+        this.trainerDAO = trainerDAO;
+        this.trainingTypeService = trainingTypeService;
+        this.trainingService = trainingService;
+        this.traineeService = traineeService;
+        this.trainerService = trainerService;
+    }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemoApplication.class);
 
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
@@ -75,13 +79,6 @@ public class DemoApplication implements CommandLineRunner {
 
         LOGGER.info("{} ", existingTrainee.get());
 
-        // Get all
-        LOGGER.info("GET ALL");
-        List<Trainee> all = traineeDAO.getAll();
-        for (Trainee trainee1 : all) {
-            LOGGER.info("{} ", trainee1);
-        }
-
         // Find by username
         LOGGER.info("FIND BY USERNAME");
         Optional<Trainee> optional2 = traineeDAO.findByUsername("A.B");
@@ -97,7 +94,6 @@ public class DemoApplication implements CommandLineRunner {
             Trainee trainee = optional2.get();
 
             UUID traineeId = trainee.getId();
-            LOGGER.info("FIND BY USERNAME : ");
             LOGGER.info("{} ", trainee);
 
             // Password change
@@ -137,14 +133,8 @@ public class DemoApplication implements CommandLineRunner {
             Optional<Trainee> byId3 = traineeDAO.findById(traineeId);
 
             Trainee trainee3 = byId3.get();
-            LOGGER.info("Future state {} {} {} {}", trainee3.getUser().getFirstName(), trainee3.getUser().getLastName(),
+            LOGGER.info("Future info {} {} {} {}", trainee3.getUser().getFirstName(), trainee3.getUser().getLastName(),
                     trainee3.getAddress(), trainee3.getDateOfBirth());
-            /*
-             * // delete LOGGER.info("DELETE TRAINEE"); traineeService.delete("A.B");
-             * Optional<Trainee> deletedTrainee =
-             * traineeService.findByUsername("A.B");
-             * LOGGER.info("Deleted trainee : {} ", deletedTrainee);
-             */
 
             // Create training type
             LOGGER.info("CREATE TRAINING TYPE");
@@ -162,14 +152,6 @@ public class DemoApplication implements CommandLineRunner {
             createDTO2.setTrainingTypeId(trainingTypeId);
 
             trainerService.create(createDTO2);
-
-            // Get all
-            LOGGER.info("GET ALL ");
-            List<Trainer> allTrainers = trainerService.getAll();
-            for (Trainer t : allTrainers) {
-                LOGGER.info("{} ", t);
-
-            }
 
             // Find by username
             LOGGER.info("FIND BY USERNAME");
@@ -189,7 +171,7 @@ public class DemoApplication implements CommandLineRunner {
                 // Password change
                 LOGGER.info("Current password : {} ", trainer.getUser().getPassword());
 
-                trainerService.changePassword(authDTO, new ChangePasswordDTO(trainerId, "1234567890"));
+                trainerService.changePassword(authDTO, new ChangePasswordDTO(trainerId, "0987654321"));
 
                 User byId4 = trainerDAO.findById(trainerId).get().getUser();
 
@@ -223,14 +205,6 @@ public class DemoApplication implements CommandLineRunner {
                 trainingCreateDTO.setTrainingTypeId(trainingTypeId);
 
                 trainingService.create(authDTO, trainingCreateDTO);
-
-                // Find all
-                List<Training> trainings = trainingService.getAll();
-
-                LOGGER.info("GET ALL ");
-                for (Training t : trainings) {
-                    LOGGER.info("{} ", t);
-                }
 
                 // Not Assigned trainers
                 LOGGER.info("NOT ASSIGNED TRAINERS -  2");
@@ -292,6 +266,19 @@ public class DemoApplication implements CommandLineRunner {
                 for (Training t : traineeTrainings6) {
                     LOGGER.info("{} ", t);
                 }
+
+                LOGGER.info("CHECK USERNAME  GENERATOR SERVICE");
+                
+                TraineeCreateDTO createDTO3 = new TraineeCreateDTO();
+                createDTO3.setAddress("P");
+                createDTO3.setDateOfBirth(LocalDate.now());
+                createDTO3.setFirstName("A");
+                createDTO3.setLastName("B");
+
+                Optional<Trainee> optional3 = traineeService.create(createDTO3);
+
+                LOGGER.info("Created user with same first name and second name {}", optional3.get());
+              
             }
 
         }

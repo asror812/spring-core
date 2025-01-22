@@ -26,7 +26,7 @@ public class UsernameGeneratorService {
         while (userDAO.findByUsername(username).isPresent()) {
             username = baseUsername + serialNumber;
             serialNumber++;
-        };
+        }
 
         return username;
     }

@@ -8,19 +8,23 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 public class ValidationUtil {
-    
+
     private static final ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
     private static final Validator v = vf.getValidator();
 
-    public  static <T> void validate(T object){
+    private ValidationUtil() {
+    }
+
+    public static <T> void validate(T object) {
+
         Set<ConstraintViolation<T>> violations = v.validate(object);
         if (!violations.isEmpty()) {
             StringBuilder errorMessage = new StringBuilder("Validation failed: ");
             for (ConstraintViolation<T> violation : violations) {
                 errorMessage.append(violation.getPropertyPath())
-                            .append(" ")
-                            .append(violation.getMessage())
-                            .append("; ");
+                        .append(" ")
+                        .append(violation.getMessage())
+                        .append("; ");
             }
             throw new IllegalArgumentException(errorMessage.toString());
         }

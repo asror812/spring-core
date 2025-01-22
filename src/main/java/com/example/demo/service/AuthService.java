@@ -26,18 +26,11 @@ public class AuthService {
         String password = authDTO.getPassword();
         String username = authDTO.getUsername();
 
-        Optional<User> existingUser = userDAO.findByUsername(username);
+        Optional<User> existingUser = userDAO.findByUsernameAndPassword(username, password);
     
         if (existingUser.isEmpty()) {
             LOGGER.error("Authentication failed for username: {}", username);
-            throw new SecurityException("Invalid1 username or password");
-        }
-
-        User user = existingUser.get();
-
-        if (!(user.getUsername().equals(username) && user.getPassword().equals(password))) {
-            LOGGER.error("Authentication failed for username: {}", username);
-            throw new SecurityException("Invalid2 username or password");
+            throw new SecurityException("Invalid username or password");
         }
 
         LOGGER.info("User '{}' authenticated successfully", username);
