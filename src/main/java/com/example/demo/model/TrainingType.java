@@ -10,11 +10,11 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-
-@Getter@Setter
+@Getter
+@Setter
 @Entity
 @Table(name = "training_types")
-public class TrainingType extends BaseEntity  {
+public class TrainingType extends BaseEntity {
 
     @Column(name = "training_type_name", nullable = false)
     private String trainingTypeName;
@@ -28,9 +28,7 @@ public class TrainingType extends BaseEntity  {
 
     @Override
     public String toString() {
-        return "TrainingType [trainingTypeName=" + trainingTypeName +"]";
+        return "TrainingType [trainingTypeName=" + trainingTypeName + "]";
     }
 
-
-    
 }

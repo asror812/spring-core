@@ -8,7 +8,6 @@ import java.util.*;
 @Repository
 public interface TrainingDAO extends GenericDAO<Training> {
 
-
     List<Training> findTraineeTrainings(String username, LocalDate from, LocalDate to, String trainerName,
             String trainingType);
 

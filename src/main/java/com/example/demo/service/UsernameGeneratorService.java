@@ -1,8 +1,6 @@
 package com.example.demo.service;
 import org.springframework.stereotype.Service;
 import com.example.demo.dao.UserDAO;
-import com.example.demo.dto.UserCreateDTO;
-
 
 @Service
 public class UsernameGeneratorService {
@@ -13,10 +11,7 @@ public class UsernameGeneratorService {
         this.userDAO = userDAO;
     }
 
-    public String generateUsername(UserCreateDTO createDTO) {
-        String firstName = createDTO.getFirstName();
-        String lastName = createDTO.getLastName();
-
+    public String generateUsername(String firstName, String lastName) {
         String baseUsername = firstName + "." + lastName;
 
         String username = baseUsername;

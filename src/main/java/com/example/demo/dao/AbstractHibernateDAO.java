@@ -2,12 +2,17 @@ package com.example.demo.dao;
 
 import java.util.Optional;
 import java.util.UUID;
+
 import org.springframework.stereotype.Repository;
+
+import com.example.demo.exceptions.DataAccessException;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 
 @Repository
-public abstract class AbstractHibernateDAO<T> implements GenericDAO<T> {
+public abstract class AbstractHibernateDAO<T> {
 
     @PersistenceContext
     protected EntityManager entityManager;
@@ -17,18 +22,19 @@ public abstract class AbstractHibernateDAO<T> implements GenericDAO<T> {
         this.clazz = clazz;
     }
 
-    @Override
     public Optional<T> findById(UUID id) {
-        return Optional.ofNullable(entityManager.find(clazz, id));
+        try {
+            return Optional.ofNullable(entityManager.find(clazz, id));
+        } catch (PersistenceException ex) {
+            throw new DataAccessException("Error accessing the database", ex);
+        }
     }
 
-    @Override
-    public Optional<T> create(T entity) {
+    public T create(T entity) {
         entityManager.persist(entity);
-        return Optional.of(entity);
+        return entity;
     }
 
-    @Override
     public void update(T entity) {
         entityManager.merge(entity);
     }

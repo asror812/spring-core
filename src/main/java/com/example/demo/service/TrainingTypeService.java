@@ -1,18 +1,45 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.TrainingTypeCreateDTO;
-import com.example.demo.model.TrainingType;
-import com.example.demo.dto.AuthDTO;
-import org.springframework.stereotype.Service;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
+
+import com.example.demo.dao.TrainingTypeDAO;
+import com.example.demo.dto.response.TrainingTypeResponseDTO;
+import com.example.demo.mapper.TrainingTypeMapper;
+import com.example.demo.model.TrainingType;
+
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 
 @Service
-public interface TrainingTypeService {
+@RequiredArgsConstructor
+public class TrainingTypeService {
 
-    Optional<TrainingType> create(AuthDTO authDTO, TrainingTypeCreateDTO createDTO);
+    private final TrainingTypeDAO trainingTypeDAO;
+    private final TrainingTypeMapper mapper;
 
-    Optional<TrainingType> findById(UUID id);
+    public Optional<TrainingType> findById(UUID id) {
+        TrainingType trainee = trainingTypeDAO.findById(id)
+                .orElse(null);
 
-    Optional<TrainingType> findByUsername(AuthDTO authDTO, String username);
+        return Optional.ofNullable(trainee);
+    }
+
+    public TrainingType findByName(String name) {
+        return trainingTypeDAO.findByName(name)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("No Training type found with name %s".formatted(name)));
+
+    }
+
+    public List<TrainingTypeResponseDTO> getAll() {
+        List<TrainingType> all = trainingTypeDAO.getAll();
+
+        return all.stream()
+                .map(mapper::toResponseDTO)
+                .toList();
+    }
+
 }

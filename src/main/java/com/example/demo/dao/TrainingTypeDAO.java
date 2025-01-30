@@ -9,4 +9,5 @@ import java.util.*;
 @Repository
 public interface TrainingTypeDAO  extends GenericDAO<TrainingType>  {
     Optional<TrainingType> findByName(String name);
+    List<TrainingType> getAll();
 }

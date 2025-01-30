@@ -1,16 +1,14 @@
-package com.example.demo.dto;
+package com.example.demo.dto.request;
 
 import java.util.UUID;
-
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class TrainerCreateDTO extends UserCreateDTO {
-
+public class TrainerSignUpRequestDTO extends SignUpRequestDTO {
+    
     @NotNull
-    private UUID trainingTypeId;
-
+    private UUID specialization;
 }

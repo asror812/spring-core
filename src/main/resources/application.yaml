@@ -1,11 +1,16 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/epam
     username: postgres
     password: postgres
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
+
+security:
+  jwt:
+     duration: 86400
+     signing-key: c9b8f44a8b7e4d1983f921a7a12e65fda67459e7199cb37f89d0a0d0e3449f56

@@ -1,6 +1,6 @@
 package com.example.demo.dao;
 
-import com.example.demo.exceptions.DataAccessException;
+
 import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;

@@ -1,43 +1,36 @@
 package com.example.demo.service;
 
-import java.util.Optional;
 import java.util.UUID;
-
 import com.example.demo.dao.GenericDAO;
-
+import com.example.demo.mapper.GenericMapper;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 
 @Getter
-public abstract class AbstractGenericService<ENTITY, CREATE_DTO, UPDATE_DTO>
-        implements GenericService<ENTITY, CREATE_DTO, UPDATE_DTO> {
+public abstract class AbstractGenericService<ENTITY, CREATE_DTO, UPDATE_DTO, RESPONSE_DTO, UPDATE_RESPONSE_DTO>
+        implements GenericService<UPDATE_DTO, RESPONSE_DTO, UPDATE_RESPONSE_DTO> {
 
-    protected abstract GenericDAO<ENTITY> genericDao();
+    protected abstract GenericDAO<ENTITY> getDao();
 
-    public Optional<T> create(CREATE_DTO createDto) {
-        return internalCreate(createDto);
-    }
+    protected abstract Class<ENTITY> getEntityClass();
 
-    public Optional<T> update(UPDATE_DTO updateDto) {
+    protected abstract GenericMapper<ENTITY, CREATE_DTO, RESPONSE_DTO, UPDATE_DTO,UPDATE_RESPONSE_DTO> getMapper();
+
+    protected abstract UPDATE_RESPONSE_DTO internalUpdate(UPDATE_DTO updateDTO);
+
+    @Transactional
+    public UPDATE_RESPONSE_DTO update(UPDATE_DTO updateDto) {
         return internalUpdate(updateDto);
     }
 
-    protected AbstractGenericService(GenericDAO<T> dao) {
-        this.dao = dao;
-    }
-
     @Override
-    public Optional<T> create(T entity) {
-        return dao.create(entity);
-    }
+    public RESPONSE_DTO findById(UUID id) {
+        ENTITY entity = getDao().findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        ("%s with id  %s not found").formatted(getEntityClass(), id)));
 
-    @Override
-    public Optional<T> findById(UUID id) {
-        return dao.findById(id);
-    }
-
-    @Override
-    public void update(T entity) {
-        dao.update(entity);
+        return getMapper().toResponseDTO(entity);
     }
 
 }
