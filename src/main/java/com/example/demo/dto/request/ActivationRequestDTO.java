@@ -9,8 +9,9 @@ import lombok.Setter;
 @Setter
 public class ActivationRequestDTO {
 
-   @NotBlank
+   @NotBlank(message = "Username must not be empty")
    private String username;
-   @NotNull
-   private Boolean isActive;
+
+   @NotNull(message = "Active status must not be empty")
+   private Boolean active;
 }

@@ -8,10 +8,9 @@ import lombok.Setter;
 @Setter
 public class SignInRequestDTO {
 
-    @NotBlank
+    @NotBlank(message = "Username must not be empty")
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "Password must not be empty")
     private String password;
-
 }

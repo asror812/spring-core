@@ -20,6 +20,8 @@ public class TrainingTypeService {
     private final TrainingTypeDAO trainingTypeDAO;
     private final TrainingTypeMapper mapper;
 
+    private static final String NO_TRAINING_TYPE_FOUND_WITH_NAME = "Training type with name : %s not found ";
+
     public Optional<TrainingType> findById(UUID id) {
         TrainingType trainee = trainingTypeDAO.findById(id)
                 .orElse(null);
@@ -30,7 +32,7 @@ public class TrainingTypeService {
     public TrainingType findByName(String name) {
         return trainingTypeDAO.findByName(name)
                 .orElseThrow(
-                        () -> new EntityNotFoundException("No Training type found with name %s".formatted(name)));
+                        () -> new EntityNotFoundException(NO_TRAINING_TYPE_FOUND_WITH_NAME.formatted(name)));
 
     }
 

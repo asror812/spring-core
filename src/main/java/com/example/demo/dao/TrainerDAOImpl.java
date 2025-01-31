@@ -14,7 +14,7 @@ import java.util.*;
 public class TrainerDAOImpl extends AbstractHibernateDAO<Trainer> implements TrainerDAO {
     private static final String HQL_FIND_TRAINER_BY_USERNAME = "FROM Trainer WHERE user.username = :username";
     private static final String HQL_GET_ALL = "FROM Trainer";
-    private static final String NO_TRAINER_FOUND_WITH_USERNAME = "No Trainer found with username {}";
+    private static final String NO_TRAINER_FOUND_WITH_USERNAME = "Trainer with username {} not found";
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerDAOImpl.class);
 
     public TrainerDAOImpl() {

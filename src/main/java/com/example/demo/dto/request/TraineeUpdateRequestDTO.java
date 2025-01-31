@@ -9,5 +9,6 @@ import lombok.Setter;
 public class TraineeUpdateRequestDTO extends UserUpdateRequestDTO {
     
     private Date dateOfBirth;
+    
     private String address;
 }

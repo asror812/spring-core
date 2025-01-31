@@ -2,13 +2,7 @@ package com.example.demo.security;
 
 import java.io.IOException;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.example.demo.exceptions.JwtAuthenticationException;
-
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -26,12 +20,11 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter implements Filter {
 
     private static final String BEARER_PREFIX = "Bearer ";
-
-    private final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private static final String HEADER_NAME = "Authorization";
     private final JwtService jwtService;
 
-    private static final Set<String> EXCLUDED_URLS = Set.of("/auth/trainer/sign-up", "/auth/trainee/sign-up", "/auth/sign-in");
+    private static final Set<String> EXCLUDED_URLS = Set.of("/auth/trainer/sign-up", "/auth/trainee/sign-up",
+            "/auth/sign-in");
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -42,7 +35,6 @@ public class JwtAuthenticationFilter implements Filter {
 
         String path = req.getServletPath();
 
-        LOGGER.info(path);
         if (EXCLUDED_URLS.contains(path)) {
             chain.doFilter(request, response);
             return;
@@ -59,8 +51,9 @@ public class JwtAuthenticationFilter implements Filter {
         Claims claims = jwtService.claims(token);
 
         if (claims == null) {
-            throw new JwtAuthenticationException("Token is invalid or expired");
+            throw new IllegalStateException("Token is invalid or expired");
         }
+
         req.setAttribute("claims", claims);
 
         chain.doFilter(request, response);

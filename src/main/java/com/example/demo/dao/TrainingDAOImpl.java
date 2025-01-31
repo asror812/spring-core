@@ -13,7 +13,6 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.springframework.stereotype.Repository;
-import java.time.LocalDate;
 import java.util.*;
 
 @Repository
@@ -31,7 +30,8 @@ public class TrainingDAOImpl extends AbstractHibernateDAO<Training> implements T
     }
 
     @Override
-    public List<Training> findTraineeTrainings(String username, LocalDate from, LocalDate to, String trainerName,
+    public List<Training> findTraineeTrainings(String username, Date from, 
+            Date to, String trainerName,
             String trainingTypeName) {
         
             CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -69,7 +69,7 @@ public class TrainingDAOImpl extends AbstractHibernateDAO<Training> implements T
     }
 
     @Override
-    public List<Training> findTrainerTrainings(String username, LocalDate from, LocalDate to, String traineeName) {
+    public List<Training> findTrainerTrainings(String username, Date from, Date to, String traineeName) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Training> query = cb.createQuery(Training.class);
         Root<Training> training = query.from(Training.class);

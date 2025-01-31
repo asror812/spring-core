@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TrainerSignUpRequestDTO extends SignUpRequestDTO {
-    
-    @NotNull
+
+    @NotNull(message = "Specialization must not be null")
     private UUID specialization;
 }

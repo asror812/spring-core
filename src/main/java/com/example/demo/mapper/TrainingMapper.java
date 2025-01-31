@@ -4,9 +4,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import com.example.demo.dto.request.TrainingCreateRequestDTO;
 import com.example.demo.dto.request.TrainingUpdateRequestDTO;
+import com.example.demo.dto.response.TraineeTrainingResponseDTO;
+import com.example.demo.dto.response.TrainerTrainingResponseDTO;
 import com.example.demo.dto.response.TrainingResponseDTO;
+import com.example.demo.dto.response.TrainingUpdateResponseDTO;
 import com.example.demo.model.Training;
-import com.example.demo.service.TrainingUpdateResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,8 +18,8 @@ public class TrainingMapper
         implements
         GenericMapper<Training, TrainingCreateRequestDTO, TrainingResponseDTO, TrainingUpdateRequestDTO, TrainingUpdateResponseDTO> {
 
-
     private final ModelMapper modelMapper;
+
     @Override
     public Training toEntity(TrainingCreateRequestDTO createDto) {
         return modelMapper.map(createDto, Training.class);
@@ -31,6 +33,18 @@ public class TrainingMapper
     @Override
     public void toEntity(TrainingUpdateRequestDTO updateDto, Training training) {
         modelMapper.map(training, updateDto);
+    }
+
+    public TrainerTrainingResponseDTO toTrainerTrainingResponseDTO(Training training) {
+        TrainerTrainingResponseDTO map = modelMapper.map(training, TrainerTrainingResponseDTO.class);
+        map.setTraineeName(training.getTrainer().getUser().getUsername());
+        return map;
+    }
+
+    public TraineeTrainingResponseDTO toTraineeTrainingResponseDTO(Training training) {
+        TraineeTrainingResponseDTO map = modelMapper.map(training, TraineeTrainingResponseDTO.class);
+        map.setTrainerName(training.getTrainer().getUser().getUsername());
+        return map;
     }
 
 }

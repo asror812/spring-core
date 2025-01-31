@@ -3,9 +3,9 @@ package com.example.demo.service;
 import java.util.UUID;
 import com.example.demo.dao.GenericDAO;
 import com.example.demo.mapper.GenericMapper;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
+import com.example.demo.exceptions.CustomException.EntityNotFoundException;
 
 @Getter
 public abstract class AbstractGenericService<ENTITY, CREATE_DTO, UPDATE_DTO, RESPONSE_DTO, UPDATE_RESPONSE_DTO>
@@ -15,7 +15,7 @@ public abstract class AbstractGenericService<ENTITY, CREATE_DTO, UPDATE_DTO, RES
 
     protected abstract Class<ENTITY> getEntityClass();
 
-    protected abstract GenericMapper<ENTITY, CREATE_DTO, RESPONSE_DTO, UPDATE_DTO,UPDATE_RESPONSE_DTO> getMapper();
+    protected abstract GenericMapper<ENTITY, CREATE_DTO, RESPONSE_DTO, UPDATE_DTO, UPDATE_RESPONSE_DTO> getMapper();
 
     protected abstract UPDATE_RESPONSE_DTO internalUpdate(UPDATE_DTO updateDTO);
 
@@ -27,8 +27,8 @@ public abstract class AbstractGenericService<ENTITY, CREATE_DTO, UPDATE_DTO, RES
     @Override
     public RESPONSE_DTO findById(UUID id) {
         ENTITY entity = getDao().findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        ("%s with id  %s not found").formatted(getEntityClass(), id)));
+                .orElseThrow(
+                    () -> new EntityNotFoundException(getEntityClass().getName(), "id", id.toString()));
 
         return getMapper().toResponseDTO(entity);
     }

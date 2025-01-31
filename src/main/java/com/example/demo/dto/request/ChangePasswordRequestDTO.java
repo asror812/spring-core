@@ -1,8 +1,6 @@
 package com.example.demo.dto.request;
 
-
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,15 +13,14 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ChangePasswordRequestDTO {
 
-   @NotBlank
+   @NotBlank(message = "Username must not be empty")
    private String username;
 
-   @NotBlank
-   @Size(min = 8, message = "Password must be at least 8 characters long")
+   @NotBlank(message = "Old password must not be empty")
+   @Size(min = 8, message = "Old password must be at least 8 characters long")
    private String oldPassword;
 
-   @NotNull
-   @Size(min = 8, message = "Password must be at least 8 characters long")
+   @NotBlank(message = "New password must not be empty")
+   @Size(min = 8, message = "New password must be at least 8 characters long")
    private String newPassword;
-      
 }

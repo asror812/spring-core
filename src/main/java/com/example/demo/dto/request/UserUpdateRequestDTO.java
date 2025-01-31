@@ -9,15 +9,15 @@ import lombok.Setter;
 @Setter
 public class UserUpdateRequestDTO {
 
-   @NotBlank
+   @NotBlank(message = "Username must not be empty")
    private String username;
 
-   @NotBlank
+   @NotBlank(message = "First name must not be empty")
    private String firstName;
 
-   @NotBlank
+   @NotBlank(message = "Last name must not be empty")
    private String lastName;
 
-   @NotNull
+   @NotNull(message = "Active status must not be null")
    private Boolean active;
 }

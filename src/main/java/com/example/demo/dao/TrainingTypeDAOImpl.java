@@ -13,6 +13,7 @@ import java.util.*;
 @Repository
 public class TrainingTypeDAOImpl extends AbstractHibernateDAO<TrainingType> implements TrainingTypeDAO {
 
+    //TODO: exception handlers, Spring aop for loggers , unit test 
     private static final String HQL_FIND_TRAINING_TYPE_BY_NAME = "FROM TrainingType WHERE trainingTypeName = :type";
     private static final String HQL_GET_ALL = "FROM TrainingType ";
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainingTypeDAOImpl.class);

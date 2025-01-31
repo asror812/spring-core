@@ -3,20 +3,23 @@ package com.example.demo.service;
 import com.example.demo.dao.TraineeDAO;
 import com.example.demo.dao.TrainerDAO;
 import com.example.demo.dao.TrainingDAO;
-import com.example.demo.dto.TraineeCriteriaDTO;
-import com.example.demo.dto.TrainerCriteriaDTO;
 import com.example.demo.dto.request.TrainingCreateRequestDTO;
 import com.example.demo.dto.request.TrainingUpdateRequestDTO;
+import com.example.demo.dto.response.TraineeTrainingResponseDTO;
+import com.example.demo.dto.response.TrainerTrainingResponseDTO;
 import com.example.demo.dto.response.TrainingResponseDTO;
+import com.example.demo.dto.response.TrainingUpdateResponseDTO;
 import com.example.demo.mapper.TrainingMapper;
 import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
-import jakarta.persistence.EntityNotFoundException;
+import com.example.demo.exceptions.CustomException.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -31,31 +34,19 @@ public class TrainingService extends
     private final TrainingDAO dao;
     private final TrainingMapper mapper;
     private final Class<Training> entityClass = Training.class;
-    private static final String NO_TRAINEE_FOUND_WITH_USERNAME = "No Trainee found with username %s";
-    private static final String NO_TRAINER_FOUND_WITH_USERNAME = "No Trainer found with username %s";
 
     @Transactional
     public void create(TrainingCreateRequestDTO createDTO) {
-
-        String traineeUsername = createDTO.getTraineeUsername();
-        String trainerUsername = createDTO.getTrainerUsername();
-
-        Trainee trainee = traineeDAO.findByUsername(traineeUsername)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        NO_TRAINEE_FOUND_WITH_USERNAME.formatted(createDTO.getTraineeUsername())));
-
-        Trainer trainer = trainerDAO.findByUsername(trainerUsername)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        NO_TRAINER_FOUND_WITH_USERNAME.formatted(createDTO.getTrainerUsername())));
+        Trainee trainee = getTraineeByUsername(createDTO.getTraineeUsername());
+        Trainer trainer = getTrainerByUsername(createDTO.getTrainerUsername());
 
         Training training = new Training();
-
         training.setTrainee(trainee);
         training.setTrainer(trainer);
         training.setTrainingDate(createDTO.getTrainingDate());
         training.setDuration(createDTO.getDuration());
         training.setTrainingType(trainer.getSpecialization());
-        training.setTrainingName(trainerUsername);
+        training.setTrainingName(createDTO.getTrainingName());
 
         dao.create(training);
 
@@ -67,38 +58,46 @@ public class TrainingService extends
 
     }
 
-    public List<Training> getTraineeTrainings(TraineeCriteriaDTO criteriaDTO) {
+    public List<TrainingResponseDTO> getTraineeTrainings(String username, Date from, Date to, String trainerName,
+            String trainingType) {
 
-        return dao.findTraineeTrainings(criteriaDTO.getUsername(),
-                criteriaDTO.getFrom(), criteriaDTO.getTo(),
-                criteriaDTO.getTrainerName(), criteriaDTO.getTrainingType());
+        return dao.findTraineeTrainings(username, from, to, trainerName, trainingType)
+                .stream()
+                .map(mapper::toResponseDTO)
+                .toList();
     }
 
-    public List<Training> getTrainerTrainings(TrainerCriteriaDTO criteriaDTO) {
-        return dao.findTrainerTrainings(criteriaDTO.getUsername(),
-                criteriaDTO.getFrom(), criteriaDTO.getTo(), criteriaDTO.getTraineeName());
+    public List<TrainingResponseDTO> getTrainerTrainings(String username, Date from, Date to, String traineeName) {
+        return dao.findTrainerTrainings(username, from, to, traineeName)
+                .stream()
+                .map(mapper::toResponseDTO)
+                .toList();
     }
 
     @Override
     protected TrainingUpdateResponseDTO internalUpdate(TrainingUpdateRequestDTO updateDTO) {
-        // TODO Auto-generated method stub
+        // TODO: Auto-generated method
         throw new UnsupportedOperationException("Unimplemented method 'internalUpdate'");
     }
 
-    public List<TrainingResponseDTO> getTrainerTrainings(String username) {
-        Trainer trainer = trainerDAO.findByUsername(username)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(
-                                NO_TRAINER_FOUND_WITH_USERNAME.formatted(username)));
-
-        return trainer.getTrainings().stream().map(mapper::toResponseDTO).toList();
+    public List<TrainerTrainingResponseDTO> getTrainerTrainings(String username) {
+        Trainer trainer = getTrainerByUsername(username);
+        return trainer.getTrainings().stream().map(mapper::toTrainerTrainingResponseDTO).toList();
     }
 
-    public List<TrainingResponseDTO> getTraineeTrainings(String username) {
-        Trainee trainee = traineeDAO.findByUsername(username)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(NO_TRAINEE_FOUND_WITH_USERNAME.formatted(username)));
-
-        return trainee.getTrainings().stream().map(mapper::toResponseDTO).toList();
+    public List<TraineeTrainingResponseDTO> getTraineeTrainings(String username) {
+        Trainee trainee = getTraineeByUsername(username);
+        return trainee.getTrainings().stream().map(mapper::toTraineeTrainingResponseDTO).toList();
     }
+
+    private Trainer getTrainerByUsername(String username) {
+        return trainerDAO.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee", "username", username));
+    }
+
+    private Trainee getTraineeByUsername(String username) {
+        return traineeDAO.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee", "username", username));
+    }
+
 }
