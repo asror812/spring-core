@@ -2,6 +2,9 @@ package com.example.demo.security;
 
 import java.io.IOException;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;
@@ -23,6 +26,7 @@ public class JwtAuthenticationFilter implements Filter {
     private static final String HEADER_NAME = "Authorization";
     private final JwtService jwtService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private static final Set<String> EXCLUDED_URLS = Set.of("/auth/trainer/sign-up", "/auth/trainee/sign-up",
             "/auth/sign-in");
 
@@ -35,7 +39,8 @@ public class JwtAuthenticationFilter implements Filter {
 
         String path = req.getServletPath();
 
-        if (EXCLUDED_URLS.contains(path)) {
+        LOGGER.info("Logging request: " + req.getMethod() + " " + req.getRequestURI());
+        if (EXCLUDED_URLS.stream().anyMatch(path::startsWith)) {
             chain.doFilter(request, response);
             return;
         }
@@ -43,19 +48,33 @@ public class JwtAuthenticationFilter implements Filter {
         String authHeader = req.getHeader(HEADER_NAME);
 
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.setContentType("application/json");
+            resp.getWriter().write("{\"error\": \"Missing or invalid Authorization header\"}");
             return;
         }
 
         String token = authHeader.substring(7);
-        Claims claims = jwtService.claims(token);
 
-        if (claims == null) {
-            throw new IllegalStateException("Token is invalid or expired");
+        try {
+            Claims claims = jwtService.claims(token);
+
+            if (claims == null) {
+                resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                resp.setContentType("application/json");
+                resp.getWriter().write("{\"error\": \"Invalid or expired token\"}");
+                return;
+            }
+            req.setAttribute("claims", claims);
+
+            chain.doFilter(request, response);
+
+        } catch (Exception e) {
+            LOGGER.error("Authentication error: ", e);
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            resp.setContentType("application/json");
+            resp.getWriter().write("{\"error\": \"Authentication failed\"}");
         }
 
-        req.setAttribute("claims", claims);
-
-        chain.doFilter(request, response);
     }
 }
