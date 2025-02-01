@@ -1,46 +1,57 @@
 package com.example.demo.service;
 
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import com.example.demo.dao.UserDAO;
-import com.example.demo.dto.AuthDTO;
+import com.example.demo.dto.request.ChangePasswordRequestDTO;
+import com.example.demo.dto.request.SignInRequestDTO;
+import com.example.demo.dto.request.SignUpRequestDTO;
+import com.example.demo.dto.response.SignInResponseDTO;
+import com.example.demo.dto.response.SingUpResponseDTO;
 import com.example.demo.model.User;
+import com.example.demo.security.JwtService;
+import com.example.demo.utils.PasswordGeneratorUtil;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
-
     private final UserDAO userDAO;
+    private final UsernameGeneratorService usernameGeneratorService;
+    private final JwtService jwtService;
 
-    public AuthService(UserDAO userDAO) {
-        this.userDAO = userDAO;
+    public SingUpResponseDTO register(SignUpRequestDTO requestDTO) {
+        String username = usernameGeneratorService.generateUsername(requestDTO.getFirstName(),
+                requestDTO.getLastName());
+        String token = jwtService.generateToken(username);
+        String password = PasswordGeneratorUtil.generate();
+
+        return new SingUpResponseDTO(username, password, token);
     }
 
-    public void authenticate(AuthDTO authDTO) {
+    @Transactional
+    public void changePassword(ChangePasswordRequestDTO requestDTO) {
+        String username = requestDTO.getUsername();
+        String oldPassword = requestDTO.getOldPassword();
 
-        String password = authDTO.getPassword();
-        String username = authDTO.getUsername();
+        User user = userDAO.findByUsernameAndPassword(username, oldPassword)
+                .orElseThrow(
+                        () -> new SecurityException("Invalid username or password"));
 
-        Optional<User> existingUser = userDAO.findByUsername(username);
-    
-        if (existingUser.isEmpty()) {
-            LOGGER.error("Authentication failed for username: {}", username);
-            throw new SecurityException("Invalid1 username or password");
-        }
-
-        User user = existingUser.get();
-
-        if (!(user.getUsername().equals(username) && user.getPassword().equals(password))) {
-            LOGGER.error("Authentication failed for username: {}", username);
-            throw new SecurityException("Invalid2 username or password");
-        }
-
-        LOGGER.info("User '{}' authenticated successfully", username);
+        user.setPassword(requestDTO.getNewPassword());
+        userDAO.update(user);
     }
 
+    public SignInResponseDTO login(SignInRequestDTO requestDTO) {
+        String username = requestDTO.getUsername();
+        String oldPassword = requestDTO.getPassword();
+
+        userDAO.findByUsernameAndPassword(username, oldPassword)
+                .orElseThrow(
+                        () -> new SecurityException("Invalid username or password"));
+
+        String token = jwtService.generateToken(requestDTO.getUsername());
+
+        return new SignInResponseDTO(token);
+    }
 }

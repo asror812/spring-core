@@ -1,235 +1,117 @@
 package com.example.demo.service;
 
 import com.example.demo.dao.TraineeDAO;
+import com.example.demo.dao.TrainerDAO;
 import com.example.demo.dao.UserDAO;
-import com.example.demo.dto.TraineeCreateDTO;
-import com.example.demo.dto.TraineeUpdateDTO;
+import com.example.demo.dto.request.TraineeSignUpRequestDTO;
+import com.example.demo.dto.request.TraineeUpdateRequestDTO;
+import com.example.demo.dto.response.SingUpResponseDTO;
+import com.example.demo.dto.response.TraineeResponseDTO;
+import com.example.demo.dto.response.TraineeUpdateResponseDTO;
+import com.example.demo.dto.response.TrainerResponseDTO;
+import com.example.demo.mapper.TraineeMapper;
+import com.example.demo.mapper.TrainerMapper;
 import com.example.demo.model.Trainee;
+import com.example.demo.model.Trainer;
 import com.example.demo.model.User;
-import com.example.demo.utils.PasswordGeneratorUtil;
-import com.example.demo.utils.ValidationUtil;
-
-import jakarta.persistence.EntityNotFoundException;
+import com.example.demo.exceptions.CustomException.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import com.example.demo.dto.AuthDTO;
-import com.example.demo.dto.ChangePasswordDTO;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
-public class TraineeService {
+@RequiredArgsConstructor
+@Getter
+public class TraineeService
+        extends
+        AbstractGenericService<Trainee, TraineeSignUpRequestDTO, TraineeUpdateRequestDTO, TraineeResponseDTO, TraineeUpdateResponseDTO> {
 
-    private final TraineeDAO traineeDAO;
-    private UserDAO userDAO;
-
-    private UsernameGeneratorService usernameGeneratorService;
-    private AuthService authService;
-
+    private final TraineeDAO dao;
+    private final TrainerDAO trainerDAO;
+    private final UserDAO userDAO;
+    private final AuthService authService;
+    private final TraineeMapper mapper;
+    private final TrainerMapper trainerMapper;
+    private final Class<Trainee> entityClass = Trainee.class;
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeService.class);
 
-    @Autowired
-    public void setUsernameGeneratorService(UsernameGeneratorService usernameGeneratorService) {
-        this.usernameGeneratorService = usernameGeneratorService;
-    }
-
-    @Autowired
-    public void setAuthService(AuthService authService) {
-        this.authService = authService;
-    }
-
-    @Autowired
-    public void setUserDAO(UserDAO userDAO) {
-        this.userDAO = userDAO;
-    }
-
-    public TraineeService(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
-    }
-
     @Transactional
-    public Optional<Trainee> create(TraineeCreateDTO createDTO) {
+    public SingUpResponseDTO register(TraineeSignUpRequestDTO requestDTO) {
+        SingUpResponseDTO register = authService.register(requestDTO);
 
-        if (createDTO == null) {
-            throw new NullPointerException("Trainee create data cannot be null.");
-        }
+        User user = new User(requestDTO.getFirstName(), requestDTO.getLastName(),
+                register.getUsername(), register.getPassword(), true);
 
-        ValidationUtil.validate(createDTO);
-
-        String username = usernameGeneratorService.generateUsername(createDTO);
-        String password = PasswordGeneratorUtil.generate();
-
-        
-        User user = new User();
-        user.setId(UUID.randomUUID());
-        user.setFirstName(createDTO.getFirstName());
-        user.setLastName(createDTO.getLastName());
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setActive(true); 
-        
         Trainee trainee = new Trainee();
-
-        trainee.setId(UUID.randomUUID());
-        trainee.setAddress(createDTO.getAddress());
-        trainee.setDateOfBirth(createDTO.getDateOfBirth());
+        trainee.setAddress(requestDTO.getAddress());
+        trainee.setDateOfBirth(requestDTO.getDateOfBirth());
         trainee.setUser(user);
 
-        Optional<Trainee> optional = traineeDAO.create(trainee);
+        dao.create(trainee);
 
-        if (optional.isEmpty()) {
-            LOGGER.error("Failed to create  {} ", createDTO);
-            return Optional.empty();
-        }
-
-        LOGGER.info("'{}' successfully created.", optional.get());
-
-        return optional;
+        return register;
     }
 
-    public Optional<Trainee> findById(AuthDTO authDTO, UUID id) {
+    @Override
+    protected TraineeUpdateResponseDTO internalUpdate(TraineeUpdateRequestDTO updateDTO) {
+        String username = updateDTO.getUsername();
 
-        Optional<Trainee> existingTrainee = traineeDAO.findById(id);
+        Trainee trainee = getTraineeByUsername(username);
 
-        if (existingTrainee.isEmpty()) {
-            return Optional.empty();
-        }
+        mapper.toEntity(updateDTO, trainee);
+        dao.update(trainee);
 
-        return existingTrainee;
+        return mapper.toUpdateResponseDTO(trainee);
     }
 
-    public List<Trainee> getAll() {
-        return traineeDAO.getAll();
-    }
+    public TraineeResponseDTO findByUsername(String username) {
+        Trainee trainee = getTraineeByUsername(username);
 
-    public Optional<Trainee> findByUsername(AuthDTO authDTO, String username) {
-
-        authService.authenticate(authDTO);
-
-        Optional<Trainee> optional = traineeDAO.findByUsername(username);
-
-        if (optional.isEmpty()) {
-            LOGGER.error("No Trainee found with username {}", username);
-            return Optional.empty();
-        }
-
-        return optional;
-
+        return mapper.toResponseDTO(trainee);
     }
 
     @Transactional
-    public void update(AuthDTO authDTO, TraineeUpdateDTO updateDTO) {
-
-        authService.authenticate(authDTO);
-
-        if (updateDTO == null) {
-            throw new NullPointerException("Trainee update data cannot be null.");
-        }
-
-        ValidationUtil.validate(authDTO);
-
-        UUID id = updateDTO.getId();
-
-        Optional<Trainee> optional = traineeDAO.findById(id);
-
-        if (optional.isEmpty()) {
-            LOGGER.error("No Trainee found with id {}", id);
-            throw new EntityNotFoundException("No Trainee found with id " + id);
-        }
-
-        User user = optional.get().getUser();
-
-        user.setFirstName(updateDTO.getFirstName());
-        user.setLastName(updateDTO.getLastName());
-
-        Trainee trainee = optional.get();
-        trainee.setAddress(updateDTO.getAddress());
-        trainee.setDateOfBirth(updateDTO.getDateOfBirth());
-
-        traineeDAO.update(trainee);
+    public void delete(String username) {
+        Trainee trainee = getTraineeByUsername(username);
+        dao.delete(trainee);
     }
 
     @Transactional
-    public void delete(AuthDTO authDTO, UUID id) {
+    public void setStatus(String username, Boolean status) {
+        Trainee trainee = getTraineeByUsername(username);
 
-        authService.authenticate(authDTO);
+        User user = trainee.getUser();
 
-        Optional<Trainee> optional = traineeDAO.findById(id);
-
-        if (optional.isEmpty()) {
-            LOGGER.error("No Trainee found with id {}", id);
-            return;
+        if (Objects.equals(user.getActive(), status)) {
+            LOGGER.error("'{}' already {}", trainee, status);
+            throw new IllegalStateException(String.format("'%s' is already %s", username, status));
         }
 
-        traineeDAO.delete(optional.get());
-    }
-
-    @Transactional
-    public void activate(AuthDTO authDTO, UUID id) {
-        authService.authenticate(authDTO);
-
-        Optional<Trainee> optional = traineeDAO.findById(id);
-
-        if (optional.isEmpty()) {
-            LOGGER.error("No Trainee found with id {}", id);
-            throw new EntityNotFoundException("No Trainee found with id " + id);
-        }
-
-        User user = optional.get().getUser();
-        if (user.isActive()) {
-            LOGGER.error("'{}' already active", optional.get());
-            return;
-        }
-
-        user.setActive(true);
+        user.setActive(status);
         userDAO.update(user);
     }
 
-    @Transactional
-    public void deactivate(AuthDTO authDTO, UUID id) {
-        authService.authenticate(authDTO);
+    public List<TrainerResponseDTO> getNotAssignedTrainers(String username) {
+        Trainee trainee = getTraineeByUsername(username);
 
-        Optional<Trainee> optional = traineeDAO.findById(id);
+        Set<Trainer> traineeTrainers = Set.copyOf(trainee.getTrainers());
 
-        if (optional.isEmpty()) {
-            LOGGER.error("No Trainee found with id {}", id);
-            throw new EntityNotFoundException("No Trainer found with id " + id);
-        }
-
-        User user = optional.get().getUser();
-        if (!user.isActive()) {
-            LOGGER.error("'{}'' already inactive", optional.get());
-            return;
-        }
-
-        user.setActive(false);
-        userDAO.update(user);
-
+        return trainerDAO.getAll().stream()
+                .filter(trainer -> !traineeTrainers.contains(trainer))
+                .map(trainerMapper::toResponseDTO)
+                .toList();
     }
 
-    @Transactional
-    public void changePassword(AuthDTO authDTO, ChangePasswordDTO changePasswordDTO) {
-
-        authService.authenticate(authDTO);
-
-        UUID id = changePasswordDTO.getId();
-
-        Optional<Trainee> optional = traineeDAO.findById(id);
-
-        if (optional.isEmpty()) {
-            LOGGER.error("No Trainee found with id {}", id);
-            throw new EntityNotFoundException("No Trainer found with id " + id);
-        }
-
-        User user = optional.get().getUser();
-
-        user.setPassword(changePasswordDTO.getNewPassword());
-
-        userDAO.update(user);
+    private Trainee getTraineeByUsername(String username) {
+        return dao.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException("Trainee", "username", username));
     }
 
 }

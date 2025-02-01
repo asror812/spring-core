@@ -9,13 +9,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TraineeCriteriaDTO {
-   
-   @NotBlank
-   private String username;
-   
-   private String trainerName;
-   private LocalDate from;
-   private LocalDate to;
-   private String trainingType;
-   
+
+    @NotBlank
+    private String username;
+
+    private String trainerName;
+    private LocalDate from;
+    private LocalDate to;
+    private String trainingType;
+
 }

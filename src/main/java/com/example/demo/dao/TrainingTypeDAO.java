@@ -7,13 +7,7 @@ import java.util.*;
 
 
 @Repository
-public interface TrainingTypeDAO  {
-
+public interface TrainingTypeDAO  extends GenericDAO<TrainingType>  {
     Optional<TrainingType> findByName(String name);
-
-    Optional<TrainingType> findById(UUID id);
-
-    Optional<TrainingType> create(TrainingType trainingType);
-
     List<TrainingType> getAll();
 }
