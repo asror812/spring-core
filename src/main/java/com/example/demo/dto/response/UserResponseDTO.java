@@ -17,4 +17,6 @@ public class UserResponseDTO {
 
     private Boolean active;
 
+
+    
 }

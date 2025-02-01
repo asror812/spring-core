@@ -2,11 +2,15 @@ package com.example.demo.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserUpdateRequestDTO {
 
    @NotBlank(message = "Username must not be empty")
@@ -20,4 +24,5 @@ public class UserUpdateRequestDTO {
 
    @NotNull(message = "Active status must not be null")
    private Boolean active;
+
 }

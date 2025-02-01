@@ -10,7 +10,7 @@ import com.example.demo.dto.response.TrainingTypeResponseDTO;
 import com.example.demo.mapper.TrainingTypeMapper;
 import com.example.demo.model.TrainingType;
 
-import jakarta.persistence.EntityNotFoundException;
+import com.example.demo.exceptions.CustomException.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -19,8 +19,6 @@ public class TrainingTypeService {
 
     private final TrainingTypeDAO trainingTypeDAO;
     private final TrainingTypeMapper mapper;
-
-    private static final String NO_TRAINING_TYPE_FOUND_WITH_NAME = "Training type with name : %s not found ";
 
     public Optional<TrainingType> findById(UUID id) {
         TrainingType trainee = trainingTypeDAO.findById(id)
@@ -32,7 +30,7 @@ public class TrainingTypeService {
     public TrainingType findByName(String name) {
         return trainingTypeDAO.findByName(name)
                 .orElseThrow(
-                        () -> new EntityNotFoundException(NO_TRAINING_TYPE_FOUND_WITH_NAME.formatted(name)));
+                        () -> new EntityNotFoundException("Training type", "name", name));
 
     }
 

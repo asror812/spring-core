@@ -35,8 +35,6 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(errMsg, HttpStatus.UNAUTHORIZED);
     }
 
-
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, List<String>>> handleValidationErrors(MethodArgumentNotValidException ex) {
         List<String> errors = ex.getBindingResult()
@@ -44,7 +42,7 @@ public class CustomExceptionHandler {
                 .stream()
                 .map(FieldError::getDefaultMessage)
                 .toList();
-                
+
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
