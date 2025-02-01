@@ -39,7 +39,6 @@ public class JwtAuthenticationFilter implements Filter {
 
         String path = req.getServletPath();
 
-        LOGGER.info("Logging request: " + req.getMethod() + " " + req.getRequestURI());
         if (EXCLUDED_URLS.stream().anyMatch(path::startsWith)) {
             chain.doFilter(request, response);
             return;
