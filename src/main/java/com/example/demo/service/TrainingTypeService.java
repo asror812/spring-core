@@ -31,9 +31,9 @@ public class TrainingTypeService {
         return trainingTypeDAO.findByName(name)
                 .orElseThrow(
                         () -> new EntityNotFoundException("Training type", "name", name));
-
     }
 
+    
     public List<TrainingTypeResponseDTO> getAll() {
         List<TrainingType> all = trainingTypeDAO.getAll();
 
