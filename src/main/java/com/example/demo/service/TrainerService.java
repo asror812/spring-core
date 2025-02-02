@@ -3,93 +3,238 @@ package com.example.demo.service;
 import com.example.demo.dao.TrainerDAO;
 import com.example.demo.dao.TrainingTypeDAO;
 import com.example.demo.dao.UserDAO;
-import com.example.demo.dto.request.TrainerSignUpRequestDTO;
-import com.example.demo.dto.request.TrainerUpdateRequestDTO;
-import com.example.demo.dto.response.SingUpResponseDTO;
-import com.example.demo.dto.response.TrainerResponseDTO;
-import com.example.demo.dto.response.TrainerUpdateResponseDTO;
-import com.example.demo.mapper.TrainerMapper;
+import com.example.demo.dto.AuthDTO;
+import com.example.demo.dto.ChangePasswordDTO;
+import com.example.demo.dto.TrainerCreateDTO;
+import com.example.demo.dto.TrainerUpdateDTO;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.TrainingType;
 import com.example.demo.model.User;
-import com.example.demo.exceptions.CustomException.EntityNotFoundException;
+import com.example.demo.utils.PasswordGeneratorUtil;
+import com.example.demo.utils.ValidationUtil;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
-@Getter
-public class TrainerService extends
-        AbstractGenericService<Trainer, TrainerSignUpRequestDTO, TrainerUpdateRequestDTO, TrainerResponseDTO, TrainerUpdateResponseDTO> {
+public class TrainerService {
 
-    private final UsernameGeneratorService usernameGeneratorService;
-    private final AuthService authService;
-    private final TrainerDAO dao;
-    private final Class<Trainer> entityClass = Trainer.class;
-    private final TrainerMapper mapper;
-    private final UserDAO userDAO;
-    private final TrainingTypeDAO trainingTypeDAO;
+    private UsernameGeneratorService usernameGeneratorService;
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
+    private final TrainerDAO trainerDAO;
 
-    public TrainerResponseDTO findByUsername(String username) {
-        Trainer trainer = getTrainerByUsername(username);
-        return mapper.toResponseDTO(trainer);
+    private AuthService authService;
+    private UserDAO userDAO;
+
+    private TrainingTypeDAO trainingTypeDAO;
+
+    @Autowired
+    public void setUsernameGeneratorService(UsernameGeneratorService usernameGeneratorService) {
+        this.usernameGeneratorService = usernameGeneratorService;
+    }
+
+    @Autowired
+    public void setTrainingTypeDAO(TrainingTypeDAO trainingTypeDAO) {
+        this.trainingTypeDAO = trainingTypeDAO;
+    }
+
+    @Autowired
+    public void setAuthService(AuthService authService) {
+        this.authService = authService;
+    }
+
+    public TrainerService(TrainerDAO trainerDAO) {
+        this.trainerDAO = trainerDAO;
+    }
+
+    @Autowired
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
     }
 
     @Transactional
-    public void setStatus(String username, Boolean status) {
-        Trainer trainer = getTrainerByUsername(username);
-        User user = trainer.getUser();
-
-        if (user.getActive().equals(status)) {
-            LOGGER.error("'{}' already {}", trainer, status);
-            throw new IllegalStateException(String.format("'%s' is already %s", username, status));
+    public Optional<Trainer> create(TrainerCreateDTO createDTO) {
+        if (createDTO == null) {
+            throw new NullPointerException("Trainer create data cannot be null.");
         }
 
-        user.setActive(status);
+        ValidationUtil.validate(createDTO);
+
+        String username = usernameGeneratorService.generateUsername(createDTO);
+        String password = PasswordGeneratorUtil.generate();
+
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setFirstName(createDTO.getFirstName());
+        user.setLastName(createDTO.getLastName());
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setActive(true);
+
+        UUID trainingTypeId = createDTO.getTrainingTypeId();
+        Optional<TrainingType> optionalTrainingType = trainingTypeDAO
+                .findById(trainingTypeId);
+
+        if (optionalTrainingType.isEmpty()) {
+            LOGGER.error("No Training Type found with id {}  ", trainingTypeId);
+            throw new EntityNotFoundException(
+                    "No Training type found with id {} " + trainingTypeId);
+        }
+
+        Trainer trainer = new Trainer();
+        trainer.setId(UUID.randomUUID());
+        trainer.setSpecialization(optionalTrainingType.get());
+        trainer.setUser(user);
+
+        Optional<Trainer> optional = trainerDAO.create(trainer);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("Failed to create  {} ", createDTO);
+            return Optional.empty();
+        }
+
+        LOGGER.info("'{}' successfully created", optional.get());
+
+        return optional;
+    }
+
+    public List<Trainer> getAll() {
+        return trainerDAO.getAll();
+    }
+
+    public Optional<Trainer> findById(AuthDTO authDTO, UUID id) {
+
+        Optional<Trainer> existingTrainer = trainerDAO.findById(id);
+
+        if (existingTrainer.isEmpty()) {
+            LOGGER.error("No Trainer found with id {} ", id);
+            return Optional.empty();
+        }
+
+        return existingTrainer;
+    }
+
+    public Optional<Trainer> findByUsername(AuthDTO authDTO, String username) {
+
+        authService.authenticate(authDTO);
+
+        Optional<Trainer> optional = trainerDAO.findByUsername(username);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with username {}", username);
+            return Optional.empty();
+        }
+
+        return optional;
+
+    }
+
+    @Transactional
+    public void update(AuthDTO authDTO, TrainerUpdateDTO updateDTO) {
+        authService.authenticate(authDTO);
+
+        if (updateDTO == null) {
+            throw new NullPointerException("Update data cannot be null.");
+        }
+
+        ValidationUtil.validate(updateDTO);
+
+        UUID id = updateDTO.getId();
+
+        Optional<Trainer> optional = findById(authDTO, id);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with id {}", id);
+            throw new EntityNotFoundException("No Trainer found with id " + id);
+        }
+
+        UUID trainingTypeId = updateDTO.getTrainingTypeId();
+        Optional<TrainingType> optionalTrainingType = trainingTypeDAO
+                .findById(trainingTypeId);
+
+        if (optionalTrainingType.isEmpty()) {
+            LOGGER.error("No Training Type found with id {}  ", trainingTypeId);
+            throw new EntityNotFoundException(
+                    "No Training type found with id {} " + trainingTypeId);
+        }
+
+        Trainer trainer = optional.get();
+
+        User user = trainer.getUser();
+        user.setFirstName(updateDTO.getFirstName());
+        user.setLastName(updateDTO.getLastName());
+
+        trainer.setSpecialization(optionalTrainingType.get());
+
+        trainerDAO.update(trainer);
+    }
+
+    @Transactional
+    public void activate(AuthDTO authDTO, UUID id) {
+        authService.authenticate(authDTO);
+
+        Optional<Trainer> optional = trainerDAO.findById(id);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with id {}", id);
+            throw new EntityNotFoundException("No Trainer found with id " + id);
+        }
+
+        User user = optional.get().getUser();
+        if (user.isActive()) {
+            LOGGER.error("'{}' already active", optional.get());
+            return;
+        }
+
+        user.setActive(true);
         userDAO.update(user);
     }
 
     @Transactional
-    public SingUpResponseDTO register(TrainerSignUpRequestDTO requestDTO) {
-        SingUpResponseDTO register = authService.register(requestDTO);
+    public void deactivate(AuthDTO authDTO, UUID id) {
+        authService.authenticate(authDTO);
 
-        User user = new User(requestDTO.getFirstName(), requestDTO.getLastName(), register.getUsername(),
-                register.getPassword(), true);
+        Optional<Trainer> optional = trainerDAO.findById(id);
 
-        UUID specialization = requestDTO.getSpecialization();
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with id {}", id);
+            throw new EntityNotFoundException("No Trainer found with id " + id);
+        }
 
-        TrainingType trainingType = trainingTypeDAO.findById(specialization)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(
-                                "TrainingType", "id", specialization.toString()));
+        User user = optional.get().getUser();
+        if (!user.isActive()) {
+            LOGGER.error("'{}' already inactive", optional.get());
+            return;
+        }
 
-        Trainer trainer = new Trainer();
-        trainer.setSpecialization(trainingType);
-        trainer.setUser(user);
+        user.setActive(false);
+        userDAO.update(user);
 
-        dao.create(trainer);
-        return register;
     }
 
-    @Override
     @Transactional
-    protected TrainerUpdateResponseDTO internalUpdate(TrainerUpdateRequestDTO updateDTO) {
-        Trainer trainer = getTrainerByUsername(updateDTO.getUsername());
-        mapper.toEntity(updateDTO, trainer);
-        dao.update(trainer);
+    public void changePassword(AuthDTO authDTO, ChangePasswordDTO changePasswordDTO) {
+        UUID id = changePasswordDTO.getId();
 
-        return mapper.toUpdateResponseDTO(trainer);
+        Optional<Trainer> optional = trainerDAO.findById(id);
+
+        if (optional.isEmpty()) {
+            LOGGER.error("No Trainer found with id {}", id);
+            throw new EntityNotFoundException("No Trainer found with id " + id);
+        }
+
+        User user = optional.get().getUser();
+
+        user.setPassword(changePasswordDTO.getNewPassword());
+
+        userDAO.update(user);
     }
-
-    private Trainer getTrainerByUsername(String username) {
-        return dao.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainer", "username", username));
-    }
-
 }

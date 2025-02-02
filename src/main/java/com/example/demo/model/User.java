@@ -1,8 +1,6 @@
 package com.example.demo.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -11,14 +9,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
-@Getter
-@Setter
+@Getter@Setter
 @ToString
 @Table(name = "users")
-@AllArgsConstructor
-@NoArgsConstructor
-public class User extends BaseEntity  {
-
+public class User extends BaseEntity { 
+   
     @Column(nullable = false)
     private String firstName;
 
@@ -32,7 +27,6 @@ public class User extends BaseEntity  {
     private String password;
 
     @Column(name = "is_active")
-    private Boolean active;
-
+    private boolean isActive;
 
 }

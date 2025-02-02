@@ -6,49 +6,59 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import com.example.demo.model.User;
-
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 
+
 @Repository
-public class UserDAOImpl extends AbstractHibernateDAO<User> implements UserDAO {
+public class UserDAOImpl implements UserDAO {
 
-    private static final String HQL_FIND_USER_BY_USERNAME = "FROM User WHERE username = :username";
-    private static final String HQL_FIND_USER_BY_USERNAME_AND_PASSWORD = "FROM User WHERE username = :username AND password = :password";
-
-    private static final String NO_USER_FOUND_WITH_USERNAME = "No Trainer found with username {}";
-
-    private static final String NO_USER_FOUND_WITH_USERNAME_AND_PASSWORD = "No Trainer found with username {} and password {}";
+    private static final String HQL_FIND_USER_BY_USERNAME = "FROM User U WHERE U.username = :username";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDAOImpl.class);
+    
+   
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    public UserDAOImpl() {
-        super(User.class);
+    public UserDAOImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     @Override
     public Optional<User> findByUsername(String username) {
         try {
+          
             TypedQuery<User> query = entityManager.createQuery(HQL_FIND_USER_BY_USERNAME, User.class);
             query.setParameter("username", username);
-            return Optional.ofNullable(query.getSingleResult());
+
+            User user = query.getSingleResult();
+            return Optional.of(user);
+
         } catch (NoResultException e) {
-            LOGGER.warn(NO_USER_FOUND_WITH_USERNAME, username);
             return Optional.empty();
         }
     }
 
-    @Override
-    public Optional<User> findByUsernameAndPassword(String username, String password) {
+
+    public void update(User user) {
         try {
-            TypedQuery<User> query = entityManager.createQuery(HQL_FIND_USER_BY_USERNAME_AND_PASSWORD, User.class);
-            query.setParameter("username", username);
-            query.setParameter("password", password);
-            return Optional.ofNullable(query.getSingleResult());
-        } catch (NoResultException e) {
-            LOGGER.warn(NO_USER_FOUND_WITH_USERNAME_AND_PASSWORD, username, password);
-            return Optional.empty();
+            entityManager.merge(user);
+        } catch (Exception e) {
+            LOGGER.error("Failed to update trainee", e);
         }
     }
 
+    public Optional<User> create(User user) {
+        try{
+            entityManager.persist(user);
+
+            return Optional.of(user);
+        } catch (Exception e) {
+            LOGGER.error("Failed to create trainee", e);
+            return Optional.empty();
+        }
+    }
 }

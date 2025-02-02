@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 import com.example.demo.model.User;
 
 @Repository
-public interface UserDAO  extends GenericDAO<User> {
+public interface UserDAO {
 
     Optional<User> findByUsername(String username);
 
-    Optional<User> findByUsernameAndPassword(String username, String password);
+    void update(User user);
+
+    Optional<User> create(User user);
 }

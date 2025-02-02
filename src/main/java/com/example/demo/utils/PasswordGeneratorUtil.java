@@ -4,8 +4,7 @@ import java.security.SecureRandom;
 
 public class PasswordGeneratorUtil {
 
-    private static final char[] LETTERS_AND_DIGITS = new char[] {
-            'a', 'b', 'c', 'd', 'e', 'f', 'g',
+    private static final char[] LETTERS_AND_DIGITS = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g',
             'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
             'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
             'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -15,7 +14,6 @@ public class PasswordGeneratorUtil {
 
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    private PasswordGeneratorUtil() {}
 
     public static String generate() {
 
