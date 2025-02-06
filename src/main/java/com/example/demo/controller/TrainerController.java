@@ -18,19 +18,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/trainer")
+@RequestMapping("/trainers")
 @RequiredArgsConstructor
 public class TrainerController {
 
     private final TrainerService trainerService;
 
-    @GetMapping("/profile/{username}")
+    @GetMapping("/profiles/{username}")
     public ResponseEntity<TrainerResponseDTO> getProfile(@PathVariable String username) {
-        TrainerResponseDTO profileInfo = trainerService.findByUsername(username);
-        return new ResponseEntity<>(profileInfo, HttpStatus.OK);
+        return ResponseEntity.ok(trainerService.findByUsername(username).orElse(null));
     }
 
-    @PutMapping("/update")
+    @PutMapping
     public ResponseEntity<TrainerUpdateResponseDTO> update(@Valid @RequestBody TrainerUpdateRequestDTO requestDTO) {
         TrainerUpdateResponseDTO update = trainerService.update(requestDTO);
         return new ResponseEntity<>(update, HttpStatus.OK);
@@ -42,5 +41,4 @@ public class TrainerController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-   
 }

@@ -1,13 +1,17 @@
 package com.example.demo.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import jakarta.validation.constraints.Size;
 
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SignUpRequestDTO {
 
    @NotBlank(message = "First name must not be empty")

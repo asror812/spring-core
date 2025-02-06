@@ -1,9 +1,10 @@
 package com.example.demo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.Date;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -16,6 +17,8 @@ import jakarta.persistence.TemporalType;
 @Table(name = "trainings")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Training extends BaseEntity {
 
     @ManyToOne

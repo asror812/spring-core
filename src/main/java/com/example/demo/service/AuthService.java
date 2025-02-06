@@ -6,7 +6,8 @@ import com.example.demo.dto.request.ChangePasswordRequestDTO;
 import com.example.demo.dto.request.SignInRequestDTO;
 import com.example.demo.dto.request.SignUpRequestDTO;
 import com.example.demo.dto.response.SignInResponseDTO;
-import com.example.demo.dto.response.SingUpResponseDTO;
+import com.example.demo.dto.response.SignUpResponseDTO;
+import com.example.demo.exceptions.InvalidCredentialsException;
 import com.example.demo.model.User;
 import com.example.demo.security.JwtService;
 import com.example.demo.utils.PasswordGeneratorUtil;
@@ -20,13 +21,13 @@ public class AuthService {
     private final UsernameGeneratorService usernameGeneratorService;
     private final JwtService jwtService;
 
-    public SingUpResponseDTO register(SignUpRequestDTO requestDTO) {
+    public SignUpResponseDTO register(SignUpRequestDTO requestDTO) {
         String username = usernameGeneratorService.generateUsername(requestDTO.getFirstName(),
                 requestDTO.getLastName());
         String token = jwtService.generateToken(username);
         String password = PasswordGeneratorUtil.generate();
 
-        return new SingUpResponseDTO(username, password, token);
+        return new SignUpResponseDTO(username, password, token);
     }
 
     @Transactional
@@ -35,8 +36,7 @@ public class AuthService {
         String oldPassword = requestDTO.getOldPassword();
 
         User user = userDAO.findByUsernameAndPassword(username, oldPassword)
-                .orElseThrow(
-                        () -> new SecurityException("Invalid username or password"));
+                .orElseThrow(InvalidCredentialsException::new);
 
         user.setPassword(requestDTO.getNewPassword());
         userDAO.update(user);
@@ -47,8 +47,7 @@ public class AuthService {
         String oldPassword = requestDTO.getPassword();
 
         userDAO.findByUsernameAndPassword(username, oldPassword)
-                .orElseThrow(
-                        () -> new SecurityException("Invalid username or password"));
+                .orElseThrow(InvalidCredentialsException::new);
 
         String token = jwtService.generateToken(requestDTO.getUsername());
 

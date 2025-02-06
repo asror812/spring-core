@@ -35,7 +35,7 @@ public class TransactionLoggerFilter implements Filter {
         MDC.put(TRANSACTION_ID, transactionID);
 
         long startTime = System.currentTimeMillis();
-        LOGGER.info("Transaction ID: {} | HTTP {} - {}", transactionID, req.getMethod(), req.getRequestURI());
+        LOGGER.info("Transaction Id: {} | HTTP {} - {}", transactionID, req.getMethod(), req.getRequestURI());
         LOGGER.info("Authorization: {}",
                 req.getHeader("Authorization") != null ? req.getHeader("Authorization") : "No Auth Header");
 

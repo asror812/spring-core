@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.dto.response.TrainingTypeResponseDTO;
 import com.example.demo.service.TrainingTypeService;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/training-type")
+@RequestMapping("/training-types")
 public class TrainingTypeController {
-
     private final TrainingTypeService trainingTypeService;
 
     @GetMapping

@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import jakarta.persistence.Table;
 @Table(name = "trainers")
 @Getter@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Trainer extends BaseEntity  {
 
     @OneToOne(cascade = CascadeType.ALL)

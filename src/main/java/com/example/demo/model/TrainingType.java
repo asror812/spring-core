@@ -7,13 +7,17 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "training_types")
+@NoArgsConstructor
+@AllArgsConstructor
 public class TrainingType extends BaseEntity {
 
     @Column(name = "training_type_name", nullable = false)

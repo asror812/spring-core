@@ -5,20 +5,22 @@ import com.example.demo.dao.TrainingTypeDAO;
 import com.example.demo.dao.UserDAO;
 import com.example.demo.dto.request.TrainerSignUpRequestDTO;
 import com.example.demo.dto.request.TrainerUpdateRequestDTO;
-import com.example.demo.dto.response.SingUpResponseDTO;
+import com.example.demo.dto.response.SignUpResponseDTO;
 import com.example.demo.dto.response.TrainerResponseDTO;
 import com.example.demo.dto.response.TrainerUpdateResponseDTO;
 import com.example.demo.mapper.TrainerMapper;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.TrainingType;
 import com.example.demo.model.User;
-import com.example.demo.exceptions.CustomException.EntityNotFoundException;
+import com.example.demo.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -36,18 +38,19 @@ public class TrainerService extends
     private final TrainingTypeDAO trainingTypeDAO;
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
 
-    public TrainerResponseDTO findByUsername(String username) {
-        Trainer trainer = getTrainerByUsername(username);
-        return mapper.toResponseDTO(trainer);
+    public Optional<TrainerResponseDTO> findByUsername(String username) {
+        return dao.findByUsername(username)
+                .map(mapper::toResponseDTO);
     }
 
     @Transactional
     public void setStatus(String username, Boolean status) {
-        Trainer trainer = getTrainerByUsername(username);
+        Trainer trainer = dao.findByUsername(username)
+                .orElseThrow(ResourceNotFoundException::new);
         User user = trainer.getUser();
 
         if (user.getActive().equals(status)) {
-            LOGGER.error("'{}' already {}", trainer, status);
+            LOGGER.warn("'{}' already {}", trainer, status);
             throw new IllegalStateException(String.format("'%s' is already %s", username, status));
         }
 
@@ -56,8 +59,8 @@ public class TrainerService extends
     }
 
     @Transactional
-    public SingUpResponseDTO register(TrainerSignUpRequestDTO requestDTO) {
-        SingUpResponseDTO register = authService.register(requestDTO);
+    public SignUpResponseDTO register(TrainerSignUpRequestDTO requestDTO) {
+        SignUpResponseDTO register = authService.register(requestDTO);
 
         User user = new User(requestDTO.getFirstName(), requestDTO.getLastName(), register.getUsername(),
                 register.getPassword(), true);
@@ -65,9 +68,7 @@ public class TrainerService extends
         UUID specialization = requestDTO.getSpecialization();
 
         TrainingType trainingType = trainingTypeDAO.findById(specialization)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(
-                                "TrainingType", "id", specialization.toString()));
+                .orElseThrow(ResourceNotFoundException::new);
 
         Trainer trainer = new Trainer();
         trainer.setSpecialization(trainingType);
@@ -80,16 +81,12 @@ public class TrainerService extends
     @Override
     @Transactional
     protected TrainerUpdateResponseDTO internalUpdate(TrainerUpdateRequestDTO updateDTO) {
-        Trainer trainer = getTrainerByUsername(updateDTO.getUsername());
+        Trainer trainer = dao.findByUsername(updateDTO.getUsername())
+                .orElseThrow(ResourceNotFoundException::new);
         mapper.toEntity(updateDTO, trainer);
         dao.update(trainer);
 
         return mapper.toUpdateResponseDTO(trainer);
-    }
-
-    private Trainer getTrainerByUsername(String username) {
-        return dao.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainer", "username", username));
     }
 
 }

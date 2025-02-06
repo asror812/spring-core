@@ -11,13 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.dto.request.TraineeUpdateRequestDTO;
 import com.example.demo.dto.response.TraineeResponseDTO;
 import com.example.demo.dto.response.TraineeUpdateResponseDTO;
 import com.example.demo.dto.response.TrainerResponseDTO;
 import com.example.demo.service.TraineeService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,24 +23,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/trainee")
+@RequestMapping("/trainees")
 public class TraineeController {
-
     private final TraineeService traineeService;
 
-    @GetMapping("/profile/{username}")
-    public ResponseEntity<TraineeResponseDTO> getProfile(@PathVariable("username") String username) {
-        TraineeResponseDTO profileInfo = traineeService.findByUsername(username);
-        return new ResponseEntity<>(profileInfo, HttpStatus.OK);
+    @GetMapping("/profiles/{username}")
+    public ResponseEntity<TraineeResponseDTO> getProfile(@PathVariable String username) {
+        return ResponseEntity.ok(traineeService.findByUsername(username).orElse(null));
     }
 
-    @PutMapping("/update")
+    @PutMapping
     public ResponseEntity<TraineeUpdateResponseDTO> update(@Valid @RequestBody TraineeUpdateRequestDTO requestDTO) {
         TraineeUpdateResponseDTO update = traineeService.update(requestDTO);
         return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{username}")
+    @DeleteMapping("/{username}")
     public ResponseEntity<?> delete(@PathVariable String username) {
         traineeService.delete(username);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -58,8 +54,4 @@ public class TraineeController {
     public ResponseEntity<List<TrainerResponseDTO>> getNotAssignedTrainers(@PathVariable String username) {
         return new ResponseEntity<>(traineeService.getNotAssignedTrainers(username), HttpStatus.OK);
     }
-
-   
-    
-
 }

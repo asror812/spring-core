@@ -4,10 +4,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.request.TrainingCreateRequestDTO;
 import com.example.demo.dto.response.TrainingResponseDTO;
 import com.example.demo.service.TrainingService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import java.util.Date;
 import java.util.List;
 import org.springframework.http.HttpStatus;
@@ -24,30 +22,34 @@ public class TrainingController {
 
     private final TrainingService trainingService;
 
-    @PostMapping("/create-training")
+    @PostMapping("/trainings")
     public ResponseEntity<?> addTraining(@Valid @RequestBody TrainingCreateRequestDTO requestDTO) {
         trainingService.create(requestDTO);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-
-    @GetMapping("/trainer-trainings/{username}")
-    public List<TrainingResponseDTO> getTrainerTrainers(@PathVariable String username,
+    @GetMapping("/trainers/{username}/trainings")
+    public ResponseEntity<List<TrainingResponseDTO>> getTrainerTrainers(@PathVariable String username,
             @RequestParam(required = false) Date from,
             @RequestParam(required = false) Date to,
             @RequestParam(required = false) String traineeName) {
 
-        return trainingService.getTrainerTrainings(username, from , to , traineeName);
+        List<TrainingResponseDTO> trainerTrainings = trainingService.getTrainerTrainings(username, from, to,
+                traineeName);
+        return ResponseEntity.ok(trainerTrainings);
     }
 
-    @GetMapping("/trainee-trainings/{username}")
-    public List<TrainingResponseDTO> getTraineeTrainings(@PathVariable String username,
+    @GetMapping("/trainees/{username}/trainings")
+    public ResponseEntity<List<TrainingResponseDTO>> getTraineeTrainings(@PathVariable String username,
             @RequestParam(required = false) Date from,
             @RequestParam(required = false) Date to,
             @RequestParam(required = false) String trainerName,
             @RequestParam(required = false) String trainingTypeName) {
 
-        return trainingService.getTraineeTrainings(username, from, to, trainerName, trainingTypeName);
+        List<TrainingResponseDTO> traineeTrainings = trainingService.getTraineeTrainings(username, from, to,
+                trainerName, trainingTypeName);
+
+        return ResponseEntity.ok(traineeTrainings);
     }
 
 }

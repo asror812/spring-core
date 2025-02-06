@@ -12,27 +12,27 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import io.jsonwebtoken.ExpiredJwtException;
-
 @RestControllerAdvice
-public class CustomExceptionHandler {
+public class GlobalExceptionHandler {
 
-    @ExceptionHandler(CustomException.EntityNotFoundException.class)
-    public ResponseEntity<?> handleEntityNotFoundException(CustomException.EntityNotFoundException e) {
-        String msg = e.getMessage();
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(msg);
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessages.RESOURCE_NOT_FOUND_ERROR);
     }
 
-    @ExceptionHandler(CustomException.DataAccessException.class)
-    public ResponseEntity<?> handleDataAccessException(CustomException.DataAccessException e) {
-        String msg = e.getMessage();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(msg);
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<?> handleDataAccessException(DataAccessException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessages.DATA_ACCESS_ERROR);
     }
 
-    @ExceptionHandler(value = { ExpiredJwtException.class })
-    public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex) {
-        var errMsg = "Token provided is expired";
-        return new ResponseEntity<>(errMsg, HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler(value = { AuthenticationException.class })
+    public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
+        return new ResponseEntity<>(ErrorMessages.AUTHENTICATION_FAILED, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(value = { InvalidCredentialsException.class })
+    public ResponseEntity<String> handleInvalidCredentialsException(InvalidCredentialsException ex) {
+        return new ResponseEntity<>(ErrorMessages.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

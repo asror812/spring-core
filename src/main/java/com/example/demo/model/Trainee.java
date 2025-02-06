@@ -1,6 +1,8 @@
 package com.example.demo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +24,8 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "trainees")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Trainee extends BaseEntity {
 
     @Column(name = "date_of_birth")

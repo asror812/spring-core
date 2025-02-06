@@ -1,11 +1,10 @@
 package com.example.demo.security;
 
-import java.util.Base64;
+
 import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -32,7 +31,7 @@ public class JwtService {
     }
 
     public SecretKey signingKey() {
-        return Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
+        return Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public Claims claims(String token) {

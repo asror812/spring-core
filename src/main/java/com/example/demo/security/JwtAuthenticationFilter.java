@@ -7,6 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import com.example.demo.exceptions.AuthenticationException;
+
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -15,7 +18,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @WebFilter(urlPatterns = { "/*" })
@@ -30,16 +32,14 @@ public class JwtAuthenticationFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private static final Set<String> EXCLUDED_URLS = Set.of(
-            "/auth/trainer/sign-up",
-            "/auth/trainee/sign-up",
+            "/auth/trainers/sign-up",
+            "/auth/trainees/sign-up",
             "/auth/sign-in");
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
         HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse resp = (HttpServletResponse) response;
 
         String path = req.getServletPath();
 
@@ -51,36 +51,23 @@ public class JwtAuthenticationFilter implements Filter {
         String authHeader = req.getHeader(HEADER_NAME);
 
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
-            sendMessage(resp, "{\"error\": \"Missing or invalid Authorization header\"}");
-            return;
+            throw new AuthenticationException("Missing or invalid Authorization header");
         }
 
         String token = authHeader.substring(7);
 
         try {
             Claims claims = jwtService.claims(token);
-
             if (claims == null) {
-                sendMessage(resp, "{\"error\": \"Invalid or expired token\"}");
-                return;
+                throw new AuthenticationException("Invalid or expired token");
             }
-
             req.setAttribute("claims", claims);
             chain.doFilter(request, response);
 
         } catch (Exception e) {
-            LOGGER.error("Authentication error: ", e);
-            sendMessage(resp, "{\"error\": \"Authentication failed\"}");
+            LOGGER.error("Authentication error: ", e.getCause());
+            throw new AuthenticationException("Authentication failed");
         }
 
     }
-
-    public void sendMessage(HttpServletResponse resp, String message) throws IOException {
-        resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        resp.setContentType("application/json");
-
-        resp.getWriter().write(message);
-
-    }
-
 }

@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrainerResponseDTO {
-    private UserUpdateResponseDTO user;
+    private UserResponseDTO user;
     private TrainingTypeResponseDTO specialization;
 }

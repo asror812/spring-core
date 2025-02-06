@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
 
-import com.example.demo.exceptions.CustomException.DataAccessException;
+import com.example.demo.exceptions.DataAccessException;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -26,25 +26,24 @@ public abstract class AbstractHibernateDAO<T> {
         try {
             return Optional.ofNullable(entityManager.find(clazz, id));
         } catch (PersistenceException ex) {
-            throw new DataAccessException("Error while accessing the database");
+            throw new DataAccessException();
         }
     }
 
     public T create(T entity) {
         try {
             entityManager.persist(entity);
-
             return entity;
         } catch (PersistenceException ex) {
-            throw new DataAccessException("Error while creating the entity");
+            throw new DataAccessException();
         }
     }
 
     public void update(T entity) {
-        try{
+        try {
             entityManager.merge(entity);
         } catch (PersistenceException ex) {
-            throw new DataAccessException("Error while updating the entity");
+            throw new DataAccessException();
         }
     }
 

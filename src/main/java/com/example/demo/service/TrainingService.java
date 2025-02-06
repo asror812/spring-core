@@ -13,7 +13,7 @@ import com.example.demo.mapper.TrainingMapper;
 import com.example.demo.model.Trainee;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
-import com.example.demo.exceptions.CustomException.EntityNotFoundException;
+import com.example.demo.exceptions.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,8 +37,10 @@ public class TrainingService extends
 
     @Transactional
     public void create(TrainingCreateRequestDTO createDTO) {
-        Trainee trainee = getTraineeByUsername(createDTO.getTraineeUsername());
-        Trainer trainer = getTrainerByUsername(createDTO.getTrainerUsername());
+        Trainee trainee = traineeDAO.findByUsername(createDTO.getTraineeUsername())
+                .orElseThrow(ResourceNotFoundException::new);
+        Trainer trainer = trainerDAO.findByUsername(createDTO.getTrainerUsername())
+                .orElseThrow(ResourceNotFoundException::new);
 
         Training training = new Training();
         training.setTrainee(trainee);
@@ -55,7 +57,6 @@ public class TrainingService extends
 
         traineeDAO.update(trainee);
         trainerDAO.update(trainer);
-
     }
 
     public List<TrainingResponseDTO> getTraineeTrainings(String username, Date from, Date to, String trainerName,
@@ -81,23 +82,15 @@ public class TrainingService extends
     }
 
     public List<TrainerTrainingResponseDTO> getTrainerTrainings(String username) {
-        Trainer trainer = getTrainerByUsername(username);
+        Trainer trainer = trainerDAO.findByUsername(username)
+                .orElseThrow(ResourceNotFoundException::new);
         return trainer.getTrainings().stream().map(mapper::toTrainerTrainingResponseDTO).toList();
     }
 
     public List<TraineeTrainingResponseDTO> getTraineeTrainings(String username) {
-        Trainee trainee = getTraineeByUsername(username);
+        Trainee trainee = traineeDAO.findByUsername(username)
+                .orElseThrow(ResourceNotFoundException::new);
         return trainee.getTrainings().stream().map(mapper::toTraineeTrainingResponseDTO).toList();
-    }
-
-    private Trainer getTrainerByUsername(String username) {
-        return trainerDAO.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainee", "username", username));
-    }
-
-    private Trainee getTraineeByUsername(String username) {
-        return traineeDAO.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException("Trainee", "username", username));
     }
 
 }

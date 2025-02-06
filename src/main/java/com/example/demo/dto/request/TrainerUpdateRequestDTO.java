@@ -12,4 +12,11 @@ public class TrainerUpdateRequestDTO extends UserUpdateRequestDTO {
 
     @NotNull(message = "Specialization must not be null")
     private UUID specialization;
+
+    public TrainerUpdateRequestDTO(String username, String firstName, String lastName,
+            Boolean active, UUID specialization) {
+        super(username, firstName, lastName, active);
+        this.specialization = specialization;
+    }
+
 }

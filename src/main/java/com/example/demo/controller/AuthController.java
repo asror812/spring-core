@@ -8,7 +8,7 @@ import com.example.demo.dto.request.SignInRequestDTO;
 import com.example.demo.dto.request.TraineeSignUpRequestDTO;
 import com.example.demo.dto.request.TrainerSignUpRequestDTO;
 import com.example.demo.dto.response.SignInResponseDTO;
-import com.example.demo.dto.response.SingUpResponseDTO;
+import com.example.demo.dto.response.SignUpResponseDTO;
 import com.example.demo.service.AuthService;
 import com.example.demo.service.TraineeService;
 import com.example.demo.service.TrainerService;
@@ -29,16 +29,16 @@ public class AuthController {
     private final TrainerService trainerService;
     private final AuthService authService;
 
-    @PostMapping("/trainee/sign-up")
-    public ResponseEntity<?> signUpTrainee(@Valid @RequestBody TraineeSignUpRequestDTO requestDTO) {
-        SingUpResponseDTO register = traineeService.register(requestDTO);
+    @PostMapping("/trainees/sign-up")
+    public ResponseEntity<SignUpResponseDTO> signUpTrainee(@Valid @RequestBody TraineeSignUpRequestDTO requestDTO) {
+        SignUpResponseDTO register = traineeService.register(requestDTO);
         return new ResponseEntity<>(register, HttpStatus.CREATED);
     }
 
-    @PostMapping("/trainer/sign-up")
-    public ResponseEntity<?> signUpTrainer(@Valid @RequestBody TrainerSignUpRequestDTO requestDTO) {
-        SingUpResponseDTO register = trainerService.register(requestDTO);
-        return ResponseEntity.ok(register);
+    @PostMapping("/trainers/sign-up")
+    public ResponseEntity<SignUpResponseDTO> signUpTrainer(@Valid @RequestBody TrainerSignUpRequestDTO requestDTO) {
+        SignUpResponseDTO register = trainerService.register(requestDTO);
+        return new ResponseEntity<>(register, HttpStatus.CREATED);
     }
 
     @PostMapping("/sign-in")
@@ -47,7 +47,7 @@ public class AuthController {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<?> changeLogin(@Valid @RequestBody ChangePasswordRequestDTO requestDTO) {
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequestDTO requestDTO) {
         authService.changePassword(requestDTO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
