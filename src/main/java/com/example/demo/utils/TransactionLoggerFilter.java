@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -17,6 +18,8 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+
+@Component
 @WebFilter(urlPatterns = { "/*" })
 @Order(1)
 public class TransactionLoggerFilter implements Filter {
@@ -35,17 +38,19 @@ public class TransactionLoggerFilter implements Filter {
         MDC.put(TRANSACTION_ID, transactionID);
 
         long startTime = System.currentTimeMillis();
-        LOGGER.info("Transaction Id: {} | HTTP {} - {}", transactionID, req.getMethod(), req.getRequestURI());
-        LOGGER.info("Authorization: {}",
-                req.getHeader("Authorization") != null ? req.getHeader("Authorization") : "No Auth Header");
+        LOGGER.info("Transaction id {} | HTTP {} - {}", transactionID, req.getMethod(), req.getRequestURI());
 
-        chain.doFilter(request, response);
+        try {
+            chain.doFilter(request, response);
 
-        long duration = System.currentTimeMillis() - startTime;
-        LOGGER.info("Transaction ID: {} | Response Status: {} | Time Taken: {}ms",
-                transactionID, res.getStatus(), duration);
+            long duration = System.currentTimeMillis() - startTime;
+            LOGGER.info("Transaction id {} | Response Status: {} | Time Taken: {}ms",
+                    transactionID, res.getStatus(), duration);
+        } finally {
 
-        MDC.remove(TRANSACTION_ID);
+            MDC.remove(TRANSACTION_ID);
+        }
+
     }
 
 }
