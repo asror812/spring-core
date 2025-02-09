@@ -42,6 +42,8 @@ public class TraineeService
     private final Class<Trainee> entityClass = Trainee.class;
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeService.class);
 
+    private static final String TRAINEE_NOT_FOUND_WITH_USERNAME = "Trainee with username %s not found";
+
     @Transactional
     public SignUpResponseDTO register(TraineeSignUpRequestDTO requestDTO) {
         SignUpResponseDTO register = authService.register(requestDTO);
@@ -64,7 +66,7 @@ public class TraineeService
         String username = updateDTO.getUsername();
 
         Trainee trainee = dao.findByUsername(username)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINEE_NOT_FOUND_WITH_USERNAME.formatted(username)));
 
         mapper.toEntity(updateDTO, trainee);
         dao.update(trainee);
@@ -80,14 +82,14 @@ public class TraineeService
     @Transactional
     public void delete(String username) {
         Trainee trainee = dao.findByUsername(username)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINEE_NOT_FOUND_WITH_USERNAME.formatted(username)));
         dao.delete(trainee);
     }
 
     @Transactional
     public void setStatus(String username, Boolean status) {
         Trainee trainee = dao.findByUsername(username)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINEE_NOT_FOUND_WITH_USERNAME.formatted(username)));
 
         User user = trainee.getUser();
 
@@ -102,7 +104,7 @@ public class TraineeService
 
     public List<TrainerResponseDTO> getNotAssignedTrainers(String username) {
         Trainee trainee = dao.findByUsername(username)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINEE_NOT_FOUND_WITH_USERNAME.formatted(username)));
 
         Set<Trainer> traineeTrainers = Set.copyOf(trainee.getTrainers());
 

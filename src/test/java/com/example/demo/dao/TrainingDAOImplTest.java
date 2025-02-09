@@ -16,13 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import com.example.demo.model.Trainee;
-import com.example.demo.model.Trainer;
 import com.example.demo.model.Training;
-import com.example.demo.model.TrainingType;
-import com.example.demo.model.User;
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;

@@ -17,9 +17,11 @@ public class TrainingTypeService {
     private final TrainingTypeDAO trainingTypeDAO;
     private final TrainingTypeMapper mapper;
 
+    private static final String TRAINING_TYPE_NOT_FOUND_WITH_NAME = "Training type with name %s not found";
+
     public TrainingType findByName(String name) {
         return trainingTypeDAO.findByName(name)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINING_TYPE_NOT_FOUND_WITH_NAME.formatted(name)));
     }
 
     public List<TrainingTypeResponseDTO> getAll() {

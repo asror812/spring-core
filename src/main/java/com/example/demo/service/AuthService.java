@@ -21,6 +21,8 @@ public class AuthService {
     private final UsernameGeneratorService usernameGeneratorService;
     private final JwtService jwtService;
 
+    private static final String INVALID_USERNAME_OR_PASSWORD = "Invalid username or password: %s | %s";
+
     public SignUpResponseDTO register(SignUpRequestDTO requestDTO) {
         String username = usernameGeneratorService.generateUsername(requestDTO.getFirstName(),
                 requestDTO.getLastName());
@@ -36,7 +38,8 @@ public class AuthService {
         String oldPassword = requestDTO.getOldPassword();
 
         User user = userDAO.findByUsernameAndPassword(username, oldPassword)
-                .orElseThrow(InvalidCredentialsException::new);
+                .orElseThrow(() -> new InvalidCredentialsException(
+                        INVALID_USERNAME_OR_PASSWORD.formatted(username, oldPassword)));
 
         user.setPassword(requestDTO.getNewPassword());
         userDAO.update(user);
@@ -47,7 +50,8 @@ public class AuthService {
         String oldPassword = requestDTO.getPassword();
 
         userDAO.findByUsernameAndPassword(username, oldPassword)
-                .orElseThrow(InvalidCredentialsException::new);
+                .orElseThrow(() -> new InvalidCredentialsException(
+                        INVALID_USERNAME_OR_PASSWORD.formatted(username, oldPassword)));
 
         String token = jwtService.generateToken(requestDTO.getUsername());
 

@@ -30,17 +30,20 @@ public class TrainingService extends
 
     private final TrainerDAO trainerDAO;
     private final TraineeDAO traineeDAO;
-
     private final TrainingDAO dao;
     private final TrainingMapper mapper;
     private final Class<Training> entityClass = Training.class;
+    private static final String TRAINER_NOT_FOUND_WITH_USERNAME = "Trainer with username %s not found";
+    private static final String TRAINEE_NOT_FOUND_WITH_USERNAME = "Trainee with username %s not found";
 
     @Transactional
     public void create(TrainingCreateRequestDTO createDTO) {
         Trainee trainee = traineeDAO.findByUsername(createDTO.getTraineeUsername())
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        TRAINEE_NOT_FOUND_WITH_USERNAME.formatted(createDTO.getTraineeUsername())));
         Trainer trainer = trainerDAO.findByUsername(createDTO.getTrainerUsername())
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        TRAINER_NOT_FOUND_WITH_USERNAME.formatted(createDTO.getTrainerUsername())));
 
         Training training = new Training();
         training.setTrainee(trainee);
@@ -83,13 +86,15 @@ public class TrainingService extends
 
     public List<TrainerTrainingResponseDTO> getTrainerTrainings(String username) {
         Trainer trainer = trainerDAO.findByUsername(username)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINER_NOT_FOUND_WITH_USERNAME.formatted(username)));
+
         return trainer.getTrainings().stream().map(mapper::toTrainerTrainingResponseDTO).toList();
     }
 
     public List<TraineeTrainingResponseDTO> getTraineeTrainings(String username) {
         Trainee trainee = traineeDAO.findByUsername(username)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINEE_NOT_FOUND_WITH_USERNAME.formatted(username)));
+
         return trainee.getTrainings().stream().map(mapper::toTraineeTrainingResponseDTO).toList();
     }
 

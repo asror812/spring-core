@@ -63,7 +63,7 @@ class TrainerControllerTest {
 
     @Test
     void getProfile_404() throws Exception {
-        when(trainerService.findByUsername("asror.r")).thenThrow(new ResourceNotFoundException());
+        when(trainerService.findByUsername("asror.r")).thenThrow(new ResourceNotFoundException("Trainer with username asror.r not found"));
 
         mockMvc.perform(MockMvcRequestBuilders
                 .get(endpoint + "/profiles/{username}", "asror.r")

@@ -38,6 +38,9 @@ public class TrainerService extends
     private final TrainingTypeDAO trainingTypeDAO;
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
 
+    private static final String TRAINER_NOT_FOUND_WITH_USERNAME = "Trainer with username %s not found";
+    private static final String TRAINING_TYPE_NOT_FOUND_WITH_ID = "Training type with id %s not found";
+
     public Optional<TrainerResponseDTO> findByUsername(String username) {
         return dao.findByUsername(username)
                 .map(mapper::toResponseDTO);
@@ -46,7 +49,7 @@ public class TrainerService extends
     @Transactional
     public void setStatus(String username, Boolean status) {
         Trainer trainer = dao.findByUsername(username)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINER_NOT_FOUND_WITH_USERNAME.formatted(username)));
         User user = trainer.getUser();
 
         if (user.getActive().equals(status)) {
@@ -68,7 +71,7 @@ public class TrainerService extends
         UUID specialization = requestDTO.getSpecialization();
 
         TrainingType trainingType = trainingTypeDAO.findById(specialization)
-                .orElseThrow(ResourceNotFoundException::new);
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINING_TYPE_NOT_FOUND_WITH_ID.formatted(specialization)));
 
         Trainer trainer = new Trainer();
         trainer.setSpecialization(trainingType);
@@ -81,8 +84,9 @@ public class TrainerService extends
     @Override
     @Transactional
     protected TrainerUpdateResponseDTO internalUpdate(TrainerUpdateRequestDTO updateDTO) {
-        Trainer trainer = dao.findByUsername(updateDTO.getUsername())
-                .orElseThrow(ResourceNotFoundException::new);
+        String username = updateDTO.getUsername();
+        Trainer trainer = dao.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINER_NOT_FOUND_WITH_USERNAME.formatted(username)));
         mapper.toEntity(updateDTO, trainer);
         dao.update(trainer);
 

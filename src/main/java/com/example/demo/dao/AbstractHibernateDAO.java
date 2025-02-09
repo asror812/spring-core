@@ -26,7 +26,7 @@ public abstract class AbstractHibernateDAO<T> {
         try {
             return Optional.ofNullable(entityManager.find(clazz, id));
         } catch (PersistenceException ex) {
-            throw new DataAccessException();
+            throw new DataAccessException("Failed to get by id " + id);
         }
     }
 
@@ -35,7 +35,7 @@ public abstract class AbstractHibernateDAO<T> {
             entityManager.persist(entity);
             return entity;
         } catch (PersistenceException ex) {
-            throw new DataAccessException();
+            throw new DataAccessException("Failed to create ");
         }
     }
 
@@ -43,7 +43,7 @@ public abstract class AbstractHibernateDAO<T> {
         try {
             entityManager.merge(entity);
         } catch (PersistenceException ex) {
-            throw new DataAccessException();
+            throw new DataAccessException("Failed to update ");
         }
     }
 

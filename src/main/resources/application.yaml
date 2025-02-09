@@ -1,18 +1,18 @@
+
+management:
+  endpoint:
+    health:
+      show-details: when-authorized
+  endpoints: 
+    web:  
+      exposure:
+        include: '*'
+
+
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/epam
-    username: postgres
-    password: postgres
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      dialect: org.hibernate.dialect.PostgreSQL10Dialect
   mvc:
     converters:
       preferred-json-mapper: gson
-security:
-  jwt:
-     duration: 86400
-     signing-key: OxMUzJX7i+iS2RuxoTD0knXvfNW1Pxcp6PXnXjZMWGg=
+  profiles:
+    active: dev
+  
