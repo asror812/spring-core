@@ -1,11 +1,18 @@
+
+management:
+  endpoint:
+    health:
+      show-details: when-authorized
+  endpoints: 
+    web:  
+      exposure:
+        include: '*'
+
+
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: create-drop
-    properties:
-      dialect: org.hibernate.dialect.PostgreSQL10Dialect
+  mvc:
+    converters:
+      preferred-json-mapper: gson
+  profiles:
+    active: dev
+  

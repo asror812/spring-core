@@ -1,18 +1,24 @@
 package com.example.demo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.time.LocalDate;
-
+import java.util.Date;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "trainings")
-@Getter@Setter
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Training extends BaseEntity {
 
     @ManyToOne
@@ -31,17 +37,17 @@ public class Training extends BaseEntity {
     private TrainingType trainingType;
 
     @Column(name = "training_date", nullable = false)
-    private LocalDate trainingDate;
+    @Temporal(TemporalType.DATE)
+    private Date trainingDate;
 
     @Column(name = "duration", nullable = false)
     private Double duration;
 
     @Override
     public String toString() {
-        return "Training [trainee=" + trainee.getUser().getUsername() + ", trainer=" + trainer.getUser().getUsername() + ", trainingName=" + trainingName
+        return "Training [trainee=" + trainee.getUser().getUsername() + ", trainer=" + trainer.getUser().getUsername()
+                + ", trainingName=" + trainingName
                 + ", trainingType=" + trainingType + ", trainingDate=" + trainingDate + ", duration=" + duration + "]";
     }
-
-    
 
 }

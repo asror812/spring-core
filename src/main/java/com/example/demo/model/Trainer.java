@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -9,6 +10,7 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -18,6 +20,7 @@ import jakarta.persistence.Table;
 @Table(name = "trainers")
 @Getter@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Trainer extends BaseEntity  {
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -30,6 +33,10 @@ public class Trainer extends BaseEntity  {
 
     @OneToMany(mappedBy = "trainer", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
     private List<Training> trainings = new ArrayList<>();
+
+
+    @ManyToMany(mappedBy = "trainers")
+    private List<Trainee> trainees = new ArrayList<>();
 
     @Override
     public String toString() {
