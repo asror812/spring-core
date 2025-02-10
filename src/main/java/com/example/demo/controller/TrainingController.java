@@ -27,6 +27,7 @@ public class TrainingController {
         trainingService.create(requestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
+    //Correct path of trainee trainings
 
     @GetMapping("/trainers/{username}/trainings")
     public ResponseEntity<List<TrainingResponseDTO>> getTrainerTrainers(@PathVariable String username,

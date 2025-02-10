@@ -35,10 +35,5 @@ public class TrainerController {
         return new ResponseEntity<>(update, HttpStatus.OK);
     }
 
-    @PatchMapping("/{username}")
-    public ResponseEntity<?> status(@PathVariable String username, @RequestParam boolean status) {
-        trainerService.setStatus(username, status);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
 
 }
