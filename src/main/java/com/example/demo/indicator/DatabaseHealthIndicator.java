@@ -1,4 +1,4 @@
-package com.example.demo.utils;
+package com.example.demo.indicator;
 
 import java.sql.Connection;
 

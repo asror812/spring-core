@@ -9,10 +9,10 @@ import com.example.demo.dto.request.TraineeSignUpRequestDTO;
 import com.example.demo.dto.request.TrainerSignUpRequestDTO;
 import com.example.demo.dto.response.SignInResponseDTO;
 import com.example.demo.dto.response.SignUpResponseDTO;
+import com.example.demo.metric.RequestCountInSignUpMetrics;
 import com.example.demo.service.AuthService;
 import com.example.demo.service.TraineeService;
 import com.example.demo.service.TrainerService;
-import com.example.demo.utils.RequestCountInSignUpMetrics;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

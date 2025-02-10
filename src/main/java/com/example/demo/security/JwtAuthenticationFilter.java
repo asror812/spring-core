@@ -1,7 +1,6 @@
 package com.example.demo.security;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Set;
 import com.example.demo.exceptions.ErrorResponseDTO;
 import org.slf4j.Logger;
@@ -10,7 +9,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import com.example.demo.exceptions.AuthenticationException;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;

@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class TraineeController {
     private final TraineeService traineeService;
 
-    
-
     @GetMapping("/profiles/{username}")
     public ResponseEntity<TraineeResponseDTO> getProfile(@PathVariable String username) {
         return ResponseEntity.ok(traineeService.findByUsername(username).orElse(null));
@@ -43,8 +41,6 @@ public class TraineeController {
         traineeService.delete(username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    //TODO: patch request must be in body
 
     @GetMapping("/{username}/not-assigned-trainers")
     public ResponseEntity<List<TrainerResponseDTO>> getNotAssignedTrainers(@PathVariable String username) {

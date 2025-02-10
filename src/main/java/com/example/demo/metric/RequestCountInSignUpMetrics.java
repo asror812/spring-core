@@ -1,4 +1,4 @@
-package com.example.demo.utils;
+package com.example.demo.metric;
 
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ public class RequestCountInSignUpMetrics {
     private final Counter requestCounter;
 
     public RequestCountInSignUpMetrics(MeterRegistry registry) {
-        this.requestCounter = Counter.builder("custom_http_sign_up_requests_total")
+        this.requestCounter = Counter.builder("http_sign_up_requests_total")
                 .description("Total HTTP sign up requests received")
                 .register(registry);
     }
