@@ -4,7 +4,9 @@ import com.example.demo.dao.TraineeDAO;
 import com.example.demo.dao.TrainerDAO;
 import com.example.demo.dao.UserDAO;
 import com.example.demo.dto.request.TraineeSignUpRequestDTO;
+import com.example.demo.dto.request.TraineeTrainersUpdateRequestDTO;
 import com.example.demo.dto.request.TraineeUpdateRequestDTO;
+import com.example.demo.dto.request.TraineeTrainersUpdateRequestDTO.TrainerDTO;
 import com.example.demo.dto.response.SignUpResponseDTO;
 import com.example.demo.dto.response.TraineeResponseDTO;
 import com.example.demo.dto.response.TraineeUpdateResponseDTO;
@@ -21,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,6 +47,7 @@ public class TraineeService
     private static final Logger LOGGER = LoggerFactory.getLogger(TraineeService.class);
 
     private static final String TRAINEE_NOT_FOUND_WITH_USERNAME = "Trainee with username %s not found";
+    private static final String TRAINER_NOT_FOUND_WITH_USERNAME = "Trainer with username %s not found";
 
     @Transactional
     public SignUpResponseDTO register(TraineeSignUpRequestDTO requestDTO) {
@@ -113,4 +118,28 @@ public class TraineeService
                 .map(trainerMapper::toResponseDTO)
                 .toList();
     }
+
+    public List<TrainerResponseDTO> updateTraineeTrainers(String username, TraineeTrainersUpdateRequestDTO requestDTO) {
+        Trainee trainee = dao.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException(TRAINEE_NOT_FOUND_WITH_USERNAME.formatted(username)));
+
+        List<Trainer> trainers = new ArrayList<>();
+        for (TrainerDTO dto : requestDTO.getTrainers()) {
+            Trainer trainer = trainerDAO.findByUsername(dto.getUsername()).orElseThrow(
+                    () -> new ResourceNotFoundException(
+                            TRAINER_NOT_FOUND_WITH_USERNAME.formatted(dto.getUsername())));
+
+            trainers.add(trainer);
+        }
+
+        trainee.setTrainers(trainers);
+
+        dao.update(trainee);
+
+        return trainers.stream()
+                .map(trainerMapper::toResponseDTO)
+                .toList();
+
+    }
+
 }

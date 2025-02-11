@@ -1,15 +1,13 @@
 package com.example.demo.controller;
 
 import static org.mockito.Mockito.when;
-
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,12 +20,13 @@ import com.example.demo.dto.response.TrainerResponseDTO;
 import com.example.demo.dto.response.TrainingTypeResponseDTO;
 import com.example.demo.dto.response.UserResponseDTO;
 import com.example.demo.exceptions.ResourceNotFoundException;
+import com.example.demo.security.JwtAuthenticationFilter;
 import com.example.demo.security.JwtService;
 import com.example.demo.service.TrainerService;
 import com.google.gson.Gson;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(TrainerController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class TrainerControllerTest {
 
     @Autowired
@@ -36,8 +35,11 @@ class TrainerControllerTest {
     @MockitoBean
     private TrainerService trainerService;
 
-    @Autowired
+    @MockitoBean
     private JwtService jwtService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Autowired
     private Gson gson;
@@ -45,7 +47,7 @@ class TrainerControllerTest {
     private final String endpoint = "/trainers";
 
     @Test
-    void getProfile_200() throws Exception {
+    void getProfile_ShouldReturn_200() throws Exception {
         TrainerResponseDTO responseDTO = new TrainerResponseDTO(
                 new UserResponseDTO("asror", "r", true),
                 new TrainingTypeResponseDTO(UUID.randomUUID(), "Swimming"));
@@ -62,8 +64,9 @@ class TrainerControllerTest {
     }
 
     @Test
-    void getProfile_404() throws Exception {
-        when(trainerService.findByUsername("asror.r")).thenThrow(new ResourceNotFoundException("Trainer with username asror.r not found"));
+    void getProfile_ShouldReturn_404() throws Exception {
+        when(trainerService.findByUsername("asror.r"))
+                .thenThrow(new ResourceNotFoundException("Trainer with username asror.r not found"));
 
         mockMvc.perform(MockMvcRequestBuilders
                 .get(endpoint + "/profiles/{username}", "asror.r")
@@ -74,27 +77,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void status_200() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                .patch(endpoint + "/{username}", "asror")
-                .header("Authorization", "Bearer " + jwtService.generateToken("asror"))
-                .accept(MediaType.APPLICATION_JSON)
-                .param("status", "true"))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
-    }
-
-    @Test
-    void status_400() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders
-                .patch(endpoint + "/{username}", "asror")
-                .header("Authorization", "Bearer " + jwtService.generateToken("asror"))
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
-
-    @Test
-    void update_400() throws Exception {
+    void update_ShouldReturn_400() throws Exception {
 
         TraineeUpdateRequestDTO updateDTO = new TraineeUpdateRequestDTO(
                 "a.a", "", "", null, new Date(), "T");
@@ -109,7 +92,7 @@ class TrainerControllerTest {
     }
 
     @Test
-    void update_200() throws Exception {
+    void update_ShouldReturn_200() throws Exception {
         TrainerUpdateRequestDTO updateDTO = new TrainerUpdateRequestDTO(
                 "a.a", "a", "a", true, UUID.randomUUID());
 

@@ -29,7 +29,7 @@ class TrainingTypeDAOImplTest {
     private EntityManager entityManager;
 
     @Test
-    void findByName() {
+    void findByName_ShouldReturn() {
         String name = "qwerty";
 
         when(entityManager.createQuery(anyString(), eq(TrainingType.class))).thenReturn(typedQuery);
@@ -38,6 +38,17 @@ class TrainingTypeDAOImplTest {
 
         Optional<TrainingType> byName = trainingTypeDAO.findByName("qwerty");
         assertTrue(byName.isPresent());
+    }
+
+    @Test
+    void findByName_ResourceNotFoundException() {
+        String name = "qwerty";
+        when(entityManager.createQuery(anyString(), eq(TrainingType.class))).thenReturn(typedQuery);
+        when(typedQuery.setParameter("type", name)).thenReturn(typedQuery);
+        when(typedQuery.getSingleResult()).thenReturn(null);
+
+        Optional<TrainingType> byName = trainingTypeDAO.findByName("qwerty");
+        assertTrue(byName.isEmpty());
     }
 
     @Test

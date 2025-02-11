@@ -5,8 +5,6 @@ import com.example.demo.dao.TrainerDAO;
 import com.example.demo.dao.TrainingDAO;
 import com.example.demo.dto.request.TrainingCreateRequestDTO;
 import com.example.demo.dto.request.TrainingUpdateRequestDTO;
-import com.example.demo.dto.response.TraineeTrainingResponseDTO;
-import com.example.demo.dto.response.TrainerTrainingResponseDTO;
 import com.example.demo.dto.response.TrainingResponseDTO;
 import com.example.demo.dto.response.TrainingUpdateResponseDTO;
 import com.example.demo.mapper.TrainingMapper;
@@ -80,22 +78,6 @@ public class TrainingService extends
 
     @Override
     protected TrainingUpdateResponseDTO internalUpdate(TrainingUpdateRequestDTO updateDTO) {
-        // TODO: Auto-generated method
         throw new UnsupportedOperationException("Unimplemented method 'internalUpdate'");
     }
-
-    public List<TrainerTrainingResponseDTO> getTrainerTrainings(String username) {
-        Trainer trainer = trainerDAO.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException(TRAINER_NOT_FOUND_WITH_USERNAME.formatted(username)));
-
-        return trainer.getTrainings().stream().map(mapper::toTrainerTrainingResponseDTO).toList();
-    }
-
-    public List<TraineeTrainingResponseDTO> getTraineeTrainings(String username) {
-        Trainee trainee = traineeDAO.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException(TRAINEE_NOT_FOUND_WITH_USERNAME.formatted(username)));
-
-        return trainee.getTrainings().stream().map(mapper::toTraineeTrainingResponseDTO).toList();
-    }
-
 }

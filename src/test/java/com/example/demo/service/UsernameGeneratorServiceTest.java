@@ -25,7 +25,7 @@ class UsernameGeneratorServiceTest {
     private UserDAO userDAO;
     
     @Test
-    void testGenerateUsername() {
+    void generateUsername_ShouldReturn_Username() {
         when(userDAO.findByUsername("asror.r")).thenReturn(Optional.of(new User()));
 
         when(userDAO.findByUsername("asror.r1")).thenReturn(Optional.empty());

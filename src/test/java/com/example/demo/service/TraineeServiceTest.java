@@ -3,6 +3,7 @@ package com.example.demo.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -58,7 +59,7 @@ class TraineeServiceTest {
 
     @Mock
     private TrainerMapper trainerMapper;
-    
+
     @InjectMocks
     private TraineeService traineeService;
 
@@ -80,7 +81,7 @@ class TraineeServiceTest {
     }
 
     @Test
-    void register_200() {
+    void register_ShoulsetStatus_ShouldBeSuccessfulldReturnSignUpResponseDTO() {
         TraineeSignUpRequestDTO requestDTO = new TraineeSignUpRequestDTO("asror", "r", new Date(), "T");
 
         SignUpResponseDTO responseDTO = new SignUpResponseDTO("asror.r", "password", "qwerty");
@@ -95,7 +96,7 @@ class TraineeServiceTest {
     }
 
     @Test
-    void findByUsername_200() {
+    void findByUsername_ShouldReturnTrainee() {
         when(traineeDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainee));
         when(traineeMapper.toResponseDTO(trainee))
                 .thenReturn(new TraineeResponseDTO(new UserResponseDTO("asror", "r", true), new Date(), "T",
@@ -108,21 +109,21 @@ class TraineeServiceTest {
     }
 
     @Test
-    void delete_200() {
+    void delete() {
         when(traineeDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainee));
         traineeService.delete("asror.r");
         verify(traineeDAO, times(1)).delete(trainee);
     }
 
     @Test
-    void setStatus_200() {
+    void setStatus_ShouldBe_Ok() {
         when(traineeDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainee));
         traineeService.setStatus("asror.r", false);
         verify(userDAO, times(1)).update(user);
     }
 
     @Test
-    void setStatus_400() {
+    void setStatus_ShouldReturn_IllegalStateException() {
         when(traineeDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainee));
 
         IllegalStateException exception = assertThrows(IllegalStateException.class,
@@ -134,9 +135,9 @@ class TraineeServiceTest {
     }
 
     @Test
-    void getNotAssignedTrainers_200() {
+    void getNotAssignedTrainers_ShouldReturnTrainers() {
         Trainer trainer1 = new Trainer(user, trainingType, new ArrayList<>(), new ArrayList<>());
-        Trainer trainer2 = new Trainer(user, trainingType, new ArrayList<>(),new ArrayList<>());
+        Trainer trainer2 = new Trainer(user, trainingType, new ArrayList<>(), new ArrayList<>());
 
         List<Trainer> assignedTrainers = List.of(trainer1);
         List<Trainer> allTrainers = List.of(trainer1, trainer2);

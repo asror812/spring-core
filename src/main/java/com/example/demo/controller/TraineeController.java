@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.example.demo.dto.request.TraineeTrainersUpdateRequestDTO;
 import com.example.demo.dto.request.TraineeUpdateRequestDTO;
 import com.example.demo.dto.response.TraineeResponseDTO;
 import com.example.demo.dto.response.TraineeUpdateResponseDTO;
@@ -45,5 +46,13 @@ public class TraineeController {
     @GetMapping("/{username}/not-assigned-trainers")
     public ResponseEntity<List<TrainerResponseDTO>> getNotAssignedTrainers(@PathVariable String username) {
         return new ResponseEntity<>(traineeService.getNotAssignedTrainers(username), HttpStatus.OK);
+    }
+
+    @PutMapping("/{username}/trainers")
+    public ResponseEntity<List<TrainerResponseDTO>> putMethodName(@PathVariable String username,
+            @RequestBody TraineeTrainersUpdateRequestDTO requestDTO) {
+
+        List<TrainerResponseDTO> trainerResponseDTOs = traineeService.updateTraineeTrainers(username, requestDTO);
+        return new ResponseEntity<>(trainerResponseDTOs, HttpStatus.OK);
     }
 }

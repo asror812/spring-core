@@ -42,12 +42,4 @@ public class Training extends BaseEntity {
 
     @Column(name = "duration", nullable = false)
     private Double duration;
-
-    @Override
-    public String toString() {
-        return "Training [trainee=" + trainee.getUser().getUsername() + ", trainer=" + trainer.getUser().getUsername()
-                + ", trainingName=" + trainingName
-                + ", trainingType=" + trainingType + ", trainingDate=" + trainingDate + ", duration=" + duration + "]";
-    }
-
 }

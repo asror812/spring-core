@@ -8,33 +8,38 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.example.demo.dto.response.TrainingTypeResponseDTO;
+import com.example.demo.security.JwtAuthenticationFilter;
 import com.example.demo.security.JwtService;
 import com.example.demo.service.TrainingTypeService;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(TrainingTypeController.class)
+@AutoConfigureMockMvc(addFilters = false)
 class TrainingTypeControllerTest {
 
     @MockitoBean
     private TrainingTypeService trainingTypeService;
 
+    @Mock
+    private JwtService jwtService;
+
+    @MockitoBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private JwtService jwtService;
-
     @Test
-    void getAll_200() throws Exception {
+    void getAll_ShouldReturn_200() throws Exception {
 
         List<TrainingTypeResponseDTO> mockResponse = Arrays.asList(
                 new TrainingTypeResponseDTO(UUID.randomUUID(), "Strength"),

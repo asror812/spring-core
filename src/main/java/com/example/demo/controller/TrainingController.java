@@ -14,22 +14,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/trainings")
 public class TrainingController {
 
     private final TrainingService trainingService;
 
-    @PostMapping("/trainings")
+    @PostMapping
     public ResponseEntity<?> addTraining(@Valid @RequestBody TrainingCreateRequestDTO requestDTO) {
         trainingService.create(requestDTO);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    //Correct path of trainee trainings
+    // Correct path of trainee trainings
 
-    @GetMapping("/trainers/{username}/trainings")
+    @GetMapping("/trainer/{username}")
     public ResponseEntity<List<TrainingResponseDTO>> getTrainerTrainers(@PathVariable String username,
             @RequestParam(required = false) Date from,
             @RequestParam(required = false) Date to,
@@ -40,7 +42,7 @@ public class TrainingController {
         return ResponseEntity.ok(trainerTrainings);
     }
 
-    @GetMapping("/trainees/{username}/trainings")
+    @GetMapping("/trainee/{username}")
     public ResponseEntity<List<TrainingResponseDTO>> getTraineeTrainings(@PathVariable String username,
             @RequestParam(required = false) Date from,
             @RequestParam(required = false) Date to,
