@@ -2,14 +2,14 @@ package com.example.demo.security;
 
 import java.io.IOException;
 import java.util.Set;
-
+import com.example.demo.exceptions.ErrorResponseDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-
-import com.example.demo.exceptions.AuthenticationException;
-
+import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -18,6 +18,7 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @WebFilter(urlPatterns = { "/*" })
@@ -30,6 +31,8 @@ public class JwtAuthenticationFilter implements Filter {
     private static final String HEADER_NAME = "Authorization";
     private final JwtService jwtService;
 
+    private final Gson gson;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private static final Set<String> EXCLUDED_URLS = Set.of(
             "/auth/trainers/sign-up",
@@ -40,6 +43,7 @@ public class JwtAuthenticationFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
 
         String path = req.getServletPath();
 
@@ -51,7 +55,8 @@ public class JwtAuthenticationFilter implements Filter {
         String authHeader = req.getHeader(HEADER_NAME);
 
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
-            throw new AuthenticationException("Missing or invalid Authorization header");
+            sendErrorResponse(res, HttpStatus.UNAUTHORIZED, "Missing or invalid Authorization header");
+            return;
         }
 
         String token = authHeader.substring(7);
@@ -59,15 +64,22 @@ public class JwtAuthenticationFilter implements Filter {
         try {
             Claims claims = jwtService.claims(token);
             if (claims == null) {
-                throw new AuthenticationException("Invalid or expired token");
+                sendErrorResponse(res, HttpStatus.UNAUTHORIZED, "Invalid or expired token");
             }
             req.setAttribute("claims", claims);
             chain.doFilter(request, response);
 
         } catch (Exception e) {
             LOGGER.error("Authentication error: ", e.getCause());
-            throw new AuthenticationException("Authentication failed");
+            sendErrorResponse(res, HttpStatus.UNAUTHORIZED, "Authentication failed");
         }
 
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
+        response.setStatus(status.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        ErrorResponseDTO errorResponse = new ErrorResponseDTO(status.value(), message);
+        response.getWriter().write(gson.toJson(errorResponse));
     }
 }

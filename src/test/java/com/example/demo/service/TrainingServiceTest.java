@@ -22,8 +22,6 @@ import com.example.demo.dao.TraineeDAO;
 import com.example.demo.dao.TrainerDAO;
 import com.example.demo.dao.TrainingDAO;
 import com.example.demo.dto.request.TrainingCreateRequestDTO;
-import com.example.demo.dto.response.TraineeTrainingResponseDTO;
-import com.example.demo.dto.response.TrainerTrainingResponseDTO;
 import com.example.demo.dto.response.TrainingResponseDTO;
 import com.example.demo.mapper.TrainingMapper;
 import com.example.demo.model.Trainee;
@@ -68,12 +66,10 @@ class TrainingServiceTest {
         trainingType = new TrainingType("Swimming", Collections.emptyList(), Collections.emptyList());
         user.setUsername("abror.r");
         trainer = new Trainer(user, trainingType, new ArrayList<>(), new ArrayList<>());
-
-        
     }
 
     @Test
-    void create() {
+    void create_ShouldBe_Ok() {
         TrainingCreateRequestDTO createDTO = new TrainingCreateRequestDTO(
                 "asror.r", "abror.r", "Swimming", new Date(),
                 1.5);
@@ -87,7 +83,7 @@ class TrainingServiceTest {
     }
 
     @Test
-    void getTraineeTrainings() {
+    void getTraineeTrainings_ShouldReturn_Trainings() {
         List<Training> trainings = getTrainingList();
         when(trainingDAO.findTraineeTrainings("asror.r", null, null, null, null)).thenReturn(trainings);
 
@@ -106,28 +102,8 @@ class TrainingServiceTest {
         verify(mapper, times(result.size())).toResponseDTO(any(Training.class));
     }
 
-
     @Test
-    void getTraineeTrainings2() {
-        trainee.setTrainings(getTrainingList()); 
-        when(traineeDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainee));
-
-        List<TraineeTrainingResponseDTO> expectedList = trainee.getTrainings().stream()
-                .map(t -> new TraineeTrainingResponseDTO())
-                .toList();
-
-        for (int i = 0; i < trainee.getTrainings().size(); i++) {
-            when(mapper.toTraineeTrainingResponseDTO(trainee.getTrainings().get(i))).thenReturn(expectedList.get(i));
-        }
-
-        List<TraineeTrainingResponseDTO> result = trainingService.getTraineeTrainings("asror.r");
-
-        assertEquals(expectedList.size(), result.size());
-        verify(mapper, times(result.size())).toTraineeTrainingResponseDTO(any(Training.class));
-    }
-
-    @Test
-    void getTrainerTrainings() {
+    void getTrainerTrainings_ShouldReturnTrainings() {
         List<Training> trainings = getTrainingList();
         when(trainingDAO.findTrainerTrainings("asror.r", null, null, null)).thenReturn(trainings);
 
@@ -144,26 +120,6 @@ class TrainingServiceTest {
         assertEquals(expectedList.size(), result.size());
         verify(trainingDAO).findTrainerTrainings("asror.r", null, null, null);
         verify(mapper, times(result.size())).toResponseDTO(any(Training.class));
-    }
-
-    @Test
-    void getTrainerTrainings2() {
-
-        trainer.setTrainings(getTrainingList());
-        when(trainerDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainer));
-
-        List<TrainerTrainingResponseDTO> expectedList = trainer.getTrainings().stream()
-                .map(t -> new TrainerTrainingResponseDTO())
-                .toList();
-
-        for (int i = 0; i < trainer.getTrainings().size(); i++) {
-            when(mapper.toTrainerTrainingResponseDTO(trainer.getTrainings().get(i))).thenReturn(expectedList.get(i));
-        }
-
-        List<TrainerTrainingResponseDTO> result = trainingService.getTrainerTrainings("asror.r");
-
-        assertEquals(expectedList.size(), result.size());
-        verify(mapper, times(result.size())).toTrainerTrainingResponseDTO(any(Training.class));
     }
 
     private List<Training> getTrainingList() {

@@ -2,12 +2,11 @@
 management:
   endpoint:
     health:
-      show-details: when-authorized
+      show-details: always
   endpoints: 
     web:  
       exposure:
-        include: '*'
-
+        include: health, info , prometheus
 
 spring:
   mvc:

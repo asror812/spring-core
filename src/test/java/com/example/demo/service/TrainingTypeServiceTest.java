@@ -31,7 +31,7 @@ class TrainingTypeServiceTest {
     private TrainingTypeMapper mapper;
 
     @Test
-    void findByName() {
+    void findByName_ShouldReturn_TrainingType() {
         when(trainingTypeDAO.findByName("swimming")).thenReturn(Optional.of(new TrainingType()));
         TrainingType byName = trainingTypeService.findByName("swimming");
 
@@ -39,7 +39,7 @@ class TrainingTypeServiceTest {
     }
 
     @Test
-    void getAll() {
+    void getAll_ShouldReturn_TrainingTypes() {
         List<TrainingType> trainingTypes = new ArrayList<>() {
             {
                 add(new TrainingType());

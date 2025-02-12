@@ -13,7 +13,6 @@ import com.example.demo.mapper.TrainerMapper;
 import com.example.demo.model.Trainer;
 import com.example.demo.model.TrainingType;
 import com.example.demo.model.User;
-
 import io.jsonwebtoken.lang.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,7 +63,7 @@ class TrainerServiceTest {
     }
 
     @Test
-    void findByUsername_200() {
+    void findByUsername_ShouldBe_Ok() {
         when(trainerDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainer));
         when(trainerMapper.toResponseDTO(trainer)).thenReturn(
                 new TrainerResponseDTO(new UserResponseDTO("asror", "r", true),
@@ -77,7 +76,7 @@ class TrainerServiceTest {
     }
 
     @Test
-    void setStatus_200() {
+    void setStatus_ShouldBe_Ok() {
         when(trainerDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainer));
 
         trainerService.setStatus("asror.r", false);
@@ -87,7 +86,7 @@ class TrainerServiceTest {
     }
 
     @Test
-    void setStatus_400() {
+    void setStatus_ShouldReturn_IllegalStateException() {
       
         when(trainerDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainer));
 
@@ -115,7 +114,7 @@ class TrainerServiceTest {
     }
 
      @Test
-    void internalUpdate() {
+    void internalUpdate_ShouldBe_Ok() {
         TrainerUpdateRequestDTO requestDTO = new TrainerUpdateRequestDTO("asror.r", "asror", "r", true, UUID.randomUUID());
 
         when(trainerDAO.findByUsername("asror.r")).thenReturn(Optional.of(trainer));

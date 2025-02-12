@@ -60,13 +60,13 @@ class TraineeDAOImplTest {
          when(typedQuery.setParameter("username", username)).thenReturn(typedQuery);
          
          when(typedQuery.getSingleResult()).thenThrow(NoResultException.class);
-         Optional<Trainee> result = traineeDAO.findByUsername(username);
 
+         Optional<Trainee> result = traineeDAO.findByUsername(username);
          assertTrue(result.isEmpty());
      }
     
     @Test
-    void findByUsername_200() {
+    void findByUsername_ShouldReturn_Trainee() {
         String username = "testUser";
         when(entityManager.createQuery(anyString(), eq(Trainee.class))).thenReturn(typedQuery);
         when(typedQuery.setParameter("username", username)).thenReturn(typedQuery);

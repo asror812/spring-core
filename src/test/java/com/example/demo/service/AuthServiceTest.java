@@ -28,7 +28,7 @@ class AuthServiceTest {
     private UsernameGeneratorService usernameGeneratorService;
 
     @InjectMocks
-    private AuthService authService;
+    private AuthServiceImpl authService;
 
     @Mock
     private UserDAO userDAO;
@@ -37,7 +37,7 @@ class AuthServiceTest {
     private JwtService jwtService;
 
     @Test
-    void changePassword_200() {
+    void changePassword_ShouldBe_Ok() {
         User user = new User("asror", "r", "asror.r", "123455678", true);
         ChangePasswordRequestDTO requestDTO = new ChangePasswordRequestDTO("asror.r", "123455678", "098765432");
 
@@ -48,15 +48,14 @@ class AuthServiceTest {
     }
 
     @Test
-    void changePassword_401() {
+    void changePassword_ShouldReturn_InvalidCredentialsException() {
         ChangePasswordRequestDTO requestDTO = new ChangePasswordRequestDTO("asror.r", "123455678", "098765432");
         assertThrows(InvalidCredentialsException.class, () -> authService.changePassword(requestDTO));
     }
 
     @Test
-    void login_200() {
+    void login_ShouldReturnSignInResponseDTO() {
         SignInRequestDTO requestDTO = new SignInRequestDTO("asror.r", "123456788");
-
         when(userDAO.findByUsernameAndPassword("asror.r", "123456788")).thenReturn(Optional.of(new User()));
         when(jwtService.generateToken("asror.r")).thenReturn("a");
         authService.login(requestDTO);
@@ -65,13 +64,13 @@ class AuthServiceTest {
     }
 
     @Test
-    void login_401() {
+    void login_ShouldReturn_InvalidCredentialsException() {
         SignInRequestDTO requestDTO = new SignInRequestDTO("asror.r", "123456788");
         assertThrows(InvalidCredentialsException.class, () -> authService.login(requestDTO));
     }
 
     @Test
-    void register_200() {
+    void register_ShouldReturnSignUpResponseDTO() {
         SignUpRequestDTO requestDTO = new SignUpRequestDTO("asror", "r");
         when(usernameGeneratorService.generateUsername("asror", "r")).thenReturn("asror.r");
         when(jwtService.generateToken("asror.r")).thenReturn("a");
