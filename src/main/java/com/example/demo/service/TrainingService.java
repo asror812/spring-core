@@ -61,7 +61,7 @@ public class TrainingService extends
     }
 
     public List<TrainingResponseDTO> getTraineeTrainings(String username, Date from, Date to, String trainerName,
-            String trainingType) {
+                                                         String trainingType) {
 
         return dao.findTraineeTrainings(username, from, to, trainerName, trainingType)
                 .stream()

@@ -16,6 +16,9 @@ spring:
       path: /h2-console 
 
 security:
+  failure:
+    count: 20
+    duration: 3
   jwt:
      duration: 86400
      signing-key: epam-training-local-rest-application-secretkey

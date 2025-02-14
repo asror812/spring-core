@@ -20,6 +20,8 @@ import com.example.demo.dto.response.SignUpResponseDTO;
 import com.example.demo.exceptions.InvalidCredentialsException;
 import com.example.demo.model.User;
 import com.example.demo.security.JwtService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -32,6 +34,9 @@ class AuthServiceTest {
 
     @Mock
     private UserDAO userDAO;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @Mock
     private JwtService jwtService;

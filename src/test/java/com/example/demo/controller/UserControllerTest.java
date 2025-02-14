@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dao.UserDAO;
+import com.example.demo.utils.BruteForceProtectorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ import com.google.gson.Gson;
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
+    @MockitoBean
+    private UserDAO userDAO;
 
     @Autowired
     private MockMvc mockMvc;
@@ -32,6 +36,9 @@ class UserControllerTest {
 
     @MockitoBean
     private TrainerService trainerService;
+
+    @MockitoBean
+    private BruteForceProtectorService bruteForceProtectorService;
 
     private StatusRequestDTO requestDTO;
 
