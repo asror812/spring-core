@@ -12,6 +12,9 @@ spring:
     properties:
       dialect: org.hibernate.dialect.PostgreSQL10Dialect
 security:
+  failure:
+    count: 3
+    duration: 300
   jwt:
      duration: 86400
      signing-key: epam-training-dev-rest-application-secretkey

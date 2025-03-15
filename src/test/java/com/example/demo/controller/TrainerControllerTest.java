@@ -4,6 +4,8 @@ import static org.mockito.Mockito.when;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
+
+import com.example.demo.utils.BruteForceProtectorService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -40,6 +42,8 @@ class TrainerControllerTest {
 
     @MockitoBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockitoBean
+    private BruteForceProtectorService bruteForceProtectorService;
 
     @Autowired
     private Gson gson;

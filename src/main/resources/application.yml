@@ -1,4 +1,3 @@
-
 management:
   endpoint:
     health:
@@ -14,4 +13,6 @@ spring:
       preferred-json-mapper: gson
   profiles:
     active: dev
-  
+
+
+

@@ -4,8 +4,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 import java.util.Date;
 import java.util.UUID;
+
+import com.example.demo.dao.UserDAO;
+import com.example.demo.utils.BruteForceProtectorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +50,14 @@ class AuthControllerTest {
     @MockitoBean
     private RequestCountInSignUpMetrics requestCountInSignUpMetrics;
 
+    @MockitoBean
+    private BruteForceProtectorService bruteForceProtectorService;
+
     @Autowired
     private Gson gson;
+
+    @MockitoBean
+    private UserDAO userDAO;
 
     @MockitoBean
     private JwtService jwtService;
@@ -67,10 +77,10 @@ class AuthControllerTest {
                 .thenReturn(new SignUpResponseDTO("asror.abror", "1234567890", "a"));
 
         mockMvc.perform(MockMvcRequestBuilders
-                .post(endpoint + "/trainees/sign-up")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(requestDTO)))
+                        .post(endpoint + "/trainees/sign-up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(requestDTO)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.token").value("a"));
@@ -81,10 +91,10 @@ class AuthControllerTest {
         TraineeSignUpRequestDTO requestDTO = new TraineeSignUpRequestDTO("", "", new Date(), "T");
 
         mockMvc.perform(MockMvcRequestBuilders
-                .post(endpoint + "/trainees/sign-up")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(requestDTO))
-                .accept(MediaType.APPLICATION_JSON))
+                        .post(endpoint + "/trainees/sign-up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(requestDTO))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -94,9 +104,9 @@ class AuthControllerTest {
         ChangePasswordRequestDTO requestDTO = new ChangePasswordRequestDTO("a.a", "qwerty12345", "12345678910");
 
         mockMvc.perform(MockMvcRequestBuilders
-                .put(endpoint + "/change-password")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(requestDTO)))
+                        .put(endpoint + "/change-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(requestDTO)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
@@ -105,9 +115,9 @@ class AuthControllerTest {
         ChangePasswordRequestDTO requestDTO = new ChangePasswordRequestDTO("", "", "123456");
 
         mockMvc.perform(MockMvcRequestBuilders
-                .put(endpoint + "/change-password")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(requestDTO)))
+                        .put(endpoint + "/change-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(requestDTO)))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
@@ -117,9 +127,9 @@ class AuthControllerTest {
         when(authService.login(Mockito.any(SignInRequestDTO.class))).thenReturn(new SignInResponseDTO("a"));
 
         mockMvc.perform(MockMvcRequestBuilders.post(endpoint + "/sign-in")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(requestDTO))
-                .accept(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(requestDTO))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.token")
@@ -135,10 +145,10 @@ class AuthControllerTest {
                 .thenReturn(new SignUpResponseDTO("a.a", "1234567890000", "a"));
 
         mockMvc.perform(MockMvcRequestBuilders
-                .post(endpoint + "/trainers/sign-up")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(requestDTO)))
+                        .post(endpoint + "/trainers/sign-up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(requestDTO)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.token")
@@ -150,9 +160,9 @@ class AuthControllerTest {
         TrainerSignUpRequestDTO requestDTO = new TrainerSignUpRequestDTO("", "", UUID.randomUUID());
 
         mockMvc.perform(MockMvcRequestBuilders.post(endpoint + "/trainers/sign-up")
-                .content(gson.toJson(requestDTO))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .content(gson.toJson(requestDTO))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -165,9 +175,9 @@ class AuthControllerTest {
         when(traineeService.register(any(TraineeSignUpRequestDTO.class))).thenReturn(new SignUpResponseDTO());
 
         mockMvc.perform(MockMvcRequestBuilders
-                .post(endpoint + "/trainees/sign-up")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(requestDTO)))
+                        .post(endpoint + "/trainees/sign-up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(requestDTO)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         verify(requestCountInSignUpMetrics, times(1)).increment();
@@ -180,9 +190,9 @@ class AuthControllerTest {
         when(trainerService.register(any(TrainerSignUpRequestDTO.class))).thenReturn(new SignUpResponseDTO());
 
         mockMvc.perform(MockMvcRequestBuilders
-                .post(endpoint + "/trainers/sign-up")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(gson.toJson(requestDTO)))
+                        .post(endpoint + "/trainers/sign-up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(requestDTO)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         verify(requestCountInSignUpMetrics, times(1)).increment();

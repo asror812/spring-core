@@ -9,9 +9,9 @@ import com.example.demo.dto.response.SignUpResponseDTO;
 
 @Service
 public interface AuthService {
-    public SignInResponseDTO login(SignInRequestDTO requestDTO);
+    SignInResponseDTO login(SignInRequestDTO requestDTO);
 
-    public void changePassword(ChangePasswordRequestDTO requestDTO);
+    void changePassword(ChangePasswordRequestDTO requestDTO);
 
-    public SignUpResponseDTO register(SignUpRequestDTO requestDTO);
+    SignUpResponseDTO register(SignUpRequestDTO requestDTO);
 }

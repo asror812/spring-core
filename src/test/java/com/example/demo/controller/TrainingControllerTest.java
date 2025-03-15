@@ -50,10 +50,10 @@ class TrainingControllerTest {
                 1.5);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trainings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + jwtService.generateToken("a.a"))
-                .content(gson.toJson(createDTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + jwtService.generateToken("a.a"))
+                        .content(gson.toJson(createDTO)))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
@@ -63,9 +63,9 @@ class TrainingControllerTest {
                 .thenReturn(getAllTraineeTrainings());
 
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/trainings/trainee/{username}", "asror.r")
-                .header("Authorization", "Bearer " + jwtService.generateToken("a.a"))
-                .accept(MediaType.APPLICATION_JSON))
+                        .get("/trainings/trainee/{username}", "asror.r")
+                        .header("Authorization", "Bearer " + jwtService.generateToken("a.a"))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(1));
 
@@ -84,9 +84,9 @@ class TrainingControllerTest {
                 .thenReturn(getAllTrainerTrainings());
 
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/trainings/trainer/{username}", "asror.r")
-                .header("Authorization", "Bearer " + jwtService.generateToken("a.a"))
-                .accept(MediaType.APPLICATION_JSON))
+                        .get("/trainings/trainer/{username}", "asror.r")
+                        .header("Authorization", "Bearer " + jwtService.generateToken("a.a"))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.size()").value(2));
     }

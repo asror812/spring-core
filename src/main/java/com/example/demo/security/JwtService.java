@@ -4,12 +4,14 @@ package com.example.demo.security;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Service
+
 public class JwtService {
 
     @Value("${security.jwt.signing-key}")
@@ -40,9 +42,5 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-    }
-
-    public boolean isTokenExpired(String token) {
-        return claims(token).getExpiration().before(new Date());
     }
 }
